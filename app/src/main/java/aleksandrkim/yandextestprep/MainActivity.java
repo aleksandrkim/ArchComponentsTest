@@ -5,13 +5,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import aleksandrkim.yandextestprep.NoteFeed.NoteFeedFragment;
+import aleksandrkim.yandextestprep.NoteFeed.NotesFeedFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String FEED_FRAGMENT_TAG = "FeedFragmentTag";
 
-    NoteFeedFragment feedFragment;
+    NotesFeedFragment feedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            feedFragment = new NoteFeedFragment();
+            feedFragment = new NotesFeedFragment();
             launchFragment();
         }
     }

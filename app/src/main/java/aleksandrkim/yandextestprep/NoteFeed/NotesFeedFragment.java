@@ -27,15 +27,13 @@ import android.widget.FrameLayout;
 import java.util.List;
 
 import aleksandrkim.yandextestprep.Db.NoteRoom;
-import aleksandrkim.yandextestprep.Db.NotesViewModel;
-import aleksandrkim.yandextestprep.NoteFeed.FeedAdapter;
 import aleksandrkim.yandextestprep.NoteCompose.NoteComposeFragment;
 import aleksandrkim.yandextestprep.R;
 
-public class NoteFeedFragment extends Fragment {
+public class NotesFeedFragment extends Fragment {
 
     private NoteComposeFragment noteComposeFragment;
-    private NotesViewModel noteFeedViewModel;
+    private NotesFeedVM noteFeedViewModel;
     private RecyclerView recyclerView;
     //    private NoteFeedAdapter feedAdapter;
     private FeedAdapter feedAdapter;
@@ -63,8 +61,7 @@ public class NoteFeedFragment extends Fragment {
         getActivity().setTitle(getString(R.string.note_feed));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        noteFeedViewModel = ViewModelProviders.of(this).get(NotesViewModel.class);
-        noteFeedViewModel.subscribeToNotes();
+        noteFeedViewModel = ViewModelProviders.of(this).get(NotesFeedVM.class);
     }
 
     private void setFab() {
@@ -102,7 +99,6 @@ public class NoteFeedFragment extends Fragment {
         noteFeedViewModel.getAllNotesSortModified().observe(this, new Observer<List<NoteRoom>>() {
             @Override
             public void onChanged(@Nullable List<NoteRoom> noteRooms) {
-                Log.i("FeedFragment", "onChanged " + noteRooms.size());
                 feedAdapter.setNotes(noteRooms);
             }
         });
