@@ -3,7 +3,6 @@ package aleksandrkim.yandextestprep.NoteFeed;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
     }
 
     public void setNotes (final List<NoteRoom> newNotes) {
-        Log.i("FeedAdapter", "setNotes: " + newNotes.size());
         if (this.notes == null) {
             this.notes = newNotes;
             notifyItemRangeInserted(0, newNotes.size());
@@ -70,18 +68,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
                 recyclerItemClickListener.onItemClick(view,  noteFeedVH.getAdapterPosition());
             }
         });
-        Log.i("FeedAdapter", "onCreateViewHolder: ");
         return noteFeedVH;
     }
 
     @Override
-    public int getItemCount() {
-        return notes == null ? 0 : notes.size();
-    }
-
-    @Override
     public void onBindViewHolder(NoteFeedVH holder, int position) {
-        Log.i("FeedAdapter", "onBindViewHolder: ");
         final NoteRoom note = notes.get(position);
         holder.id = note.getId();
         holder.title.setText(note.getTitle());
@@ -90,6 +81,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
         holder.content.setText(note.getContent());
         holder.date.setText(note.getLastModifiedString());
         holder.colorStrip.getBackground().setTint(note.getColor());
+    }
+
+    @Override
+    public int getItemCount() {
+        return notes == null ? 0 : notes.size();
     }
 
     static class NoteFeedVH extends RecyclerView.ViewHolder{

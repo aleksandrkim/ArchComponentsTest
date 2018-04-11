@@ -14,6 +14,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,10 +33,8 @@ import aleksandrkim.yandextestprep.R;
 
 public class NotesFeedFragment extends Fragment {
 
-    private NoteComposeFragment noteComposeFragment;
     private NotesFeedVM noteFeedViewModel;
     private RecyclerView recyclerView;
-    //    private NoteFeedAdapter feedAdapter;
     private FeedAdapter feedAdapter;
 
     private FloatingActionButton fab;
@@ -47,11 +46,9 @@ public class NotesFeedFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
-
         init();
 
         setFab();
-
         setRecyclerView();
         return v;
     }
@@ -59,7 +56,6 @@ public class NotesFeedFragment extends Fragment {
     private void init() {
         setHasOptionsMenu(true);
         getActivity().setTitle(getString(R.string.note_feed));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         noteFeedViewModel = ViewModelProviders.of(getActivity()).get(NotesFeedVM.class);
     }
@@ -68,6 +64,7 @@ public class NotesFeedFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                noteFeedViewModel.resetTempNoteFields();
                 launchNoteComposeFragment();
             }
         });
@@ -152,7 +149,6 @@ public class NotesFeedFragment extends Fragment {
                         actionState, isCurrentlyActive);
             }
         };
-
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }

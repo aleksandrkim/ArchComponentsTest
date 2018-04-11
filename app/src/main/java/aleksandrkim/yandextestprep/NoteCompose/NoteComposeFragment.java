@@ -1,10 +1,13 @@
 package aleksandrkim.yandextestprep.NoteCompose;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,9 +29,8 @@ import aleksandrkim.yandextestprep.R;
 
 public class NoteComposeFragment extends Fragment {
 
-    String TAG = "NoteComposeFragment";
+    final String TAG = "NoteComposeFragment";
     private NotesFeedVM notesFeedViewModel;
-    private int currentNoteId = -1;
 
     private EditText etTitle, etContent;
 
@@ -40,24 +42,26 @@ public class NoteComposeFragment extends Fragment {
         etTitle = v.findViewById(R.id.tv_title);
         etContent = v.findViewById(R.id.tv_content);
 
-        init();
-        setEt();
-        bindViewModelToEt();
+        init(savedInstanceState);
+//        bindViewModelToEt();
 
         return v;
     }
 
-    private void init() {
+    private void init(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         getActivity().setTitle(getString(R.string.new_note));
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         notesFeedViewModel = ViewModelProviders.of(getActivity()).get(NotesFeedVM.class);
+        if (savedInstanceState != null)
+            notesFeedViewModel.setColor(savedInstanceState.getInt(getString(R.string.saved_color_choice)));
+        else
+            setEt();
     }
 
-    private void setEt(){
-        etTitle.setText(notesFeedViewModel.getTitle().getValue());
-        etContent.setText(notesFeedViewModel.getContent().getValue());
+    private void setEt() {
+        etTitle.setText(notesFeedViewModel.getTitle());
+        etContent.setText(notesFeedViewModel.getContent());
     }
 
     private void bindViewModelToEt() {
@@ -97,21 +101,23 @@ public class NoteComposeFragment extends Fragment {
     }
 
     private void saveNote() {
+        updateVM();
         if (!notesFeedViewModel.hasEitherField()) {
             Toast.makeText(getActivity(), getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show();
             return;
         }
+        notesFeedViewModel.addNewNote();
+    }
 
-        if (currentNoteId == -1)
-            notesFeedViewModel.addNewNote();
-        else
-            notesFeedViewModel.updateNote(currentNoteId);
+    private void updateVM() {
+        notesFeedViewModel.setTitle(etTitle.getText().toString());
+        notesFeedViewModel.setContent(etContent.getText().toString());
     }
 
     private void changeColorTag() {
-        final String [] colorTitles = new String []{"White", "Red", "Magenta", "Yellow", "Green",
+        final String[] colorTitles = new String[]{"White", "Red", "Magenta", "Yellow", "Green",
                 "Cyan", "Blue", "Dark Gray"};
-        final int [] colors = new int []{Color.WHITE, Color.RED, Color.MAGENTA, Color.YELLOW, Color.GREEN,
+        final int[] colors = new int[]{Color.WHITE, Color.RED, Color.MAGENTA, Color.YELLOW, Color.GREEN,
                 Color.CYAN, Color.BLUE, Color.DKGRAY};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -143,18 +149,31 @@ public class NoteComposeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_save:
                 saveNote();
-                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 getActivity().getSupportFragmentManager().popBackStack();
-                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 return true;
             case R.id.menu_color_pick:
                 changeColorTag();
                 return true;
-            default:
-                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                getActivity().getSupportFragmentManager().popBackStack();
-                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                return true;
         }
+        return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.i(TAG, "onDestroyView: ");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDetach() {
+        Log.i(TAG, "onDetach: ");
+        super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.i(TAG, "onSaveInstanceState: ");
+        outState.putInt(getString(R.string.saved_color_choice), notesFeedViewModel.getColor().getValue());
+        super.onSaveInstanceState(outState);
     }
 }

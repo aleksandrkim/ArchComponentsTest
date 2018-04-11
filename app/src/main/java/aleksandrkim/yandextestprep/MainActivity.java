@@ -1,17 +1,18 @@
 package aleksandrkim.yandextestprep;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
+import aleksandrkim.yandextestprep.Db.NotesFeedVM;
 import aleksandrkim.yandextestprep.NoteFeed.NotesFeedFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String FEED_FRAGMENT_TAG = "FeedFragmentTag";
-
-    NotesFeedFragment feedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,15 +21,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ViewModelProviders.of(this).get(NotesFeedVM.class);
+
         if (savedInstanceState == null) {
-            feedFragment = new NotesFeedFragment();
-            launchFragment();
+            launchFeedFragment();
         }
     }
 
-    private void launchFragment() {
+    private void launchFeedFragment() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, feedFragment, FEED_FRAGMENT_TAG)
+                .replace(R.id.fragment_frame, new NotesFeedFragment(), FEED_FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Log.i("MainActivity", "onBackPressed: " + getSupportFragmentManager().getBackStackEntryCount());
         if (getSupportFragmentManager().getBackStackEntryCount() < 2)
             finish();
         super.onBackPressed();

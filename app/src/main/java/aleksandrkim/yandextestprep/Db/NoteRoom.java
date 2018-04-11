@@ -69,7 +69,6 @@ public class NoteRoom {
 
     public String getLastModifiedString() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM", new Locale("Ru"));
-//        return simpleDateFormat.format(Converters.fromTimestamp(lastModified));
         return simpleDateFormat.format(lastModified);
     }
 
