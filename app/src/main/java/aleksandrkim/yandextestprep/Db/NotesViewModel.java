@@ -4,11 +4,10 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by Aleksandr Kim on 10 Apr, 2018 1:59 PM for YandexTestPrep
@@ -16,34 +15,32 @@ import io.realm.RealmResults;
 
 public class NotesViewModel extends AndroidViewModel {
 
-    private Realm realm;
-    private NoteDao noteDao;
     private MutableLiveData<String> title;
     private MutableLiveData<String> content;
     private MutableLiveData<Integer> color;
 
     private AppDatabase db;
     private LiveData<NoteRoom> noteRoomLiveData;
-//    private LiveRealmData allNotes;
+    private LiveData<List<NoteRoom>> allNotes;
 
     public NotesViewModel(Application application) {
         super(application);
+        Log.d("ViewModel", "started");
+        initFields();
+    }
 
-        realm = Realm.getDefaultInstance();
-        noteDao = new NoteDao(realm);
-//        if (title == null) {
-            title = new MutableLiveData<>();
-            title.setValue("");
-//        }
-//        if (content == null) {
-            content = new MutableLiveData<>();
-            content.setValue("");
-//        }
-//        if (color == null) {
-            color = new MutableLiveData<>();
-            color.setValue(-1);
-//        }
+    private void initFields() {
+        title = new MutableLiveData<>();
+        title.setValue("");
+        content = new MutableLiveData<>();
+        content.setValue("");
+        color = new MutableLiveData<>();
+        color.setValue(-1); // базовый цвет - белый
         db = AppDatabase.getDb(this.getApplication());
+    }
+
+    public void subscribeToNotes(){
+        allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
     }
 
     public void pullNoteInfo(int id) {
@@ -57,6 +54,50 @@ public class NotesViewModel extends AndroidViewModel {
         if ((title == null || title.getValue().trim().isEmpty()) && (content == null || content.getValue().trim().isEmpty()))
             return false;
         return true;
+    }
+
+    public void addNewNote() {
+        if (title.getValue().trim().isEmpty()) {
+            String content = this.content.getValue().concat(" ");
+            title.setValue(content.substring(0, content.indexOf(' ')));
+        }
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().insert(new NoteRoom(title.getValue(), content.getValue(), color.getValue()));
+            }
+        });
+    }
+
+    public void updateNote(final int id) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().update(id, title.getValue(), content.getValue(), color.getValue());
+            }
+        });
+    }
+
+    public void deleteNote(final int id) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().delete(id);
+            }
+        });
+    }
+
+    public void deleteAllNotes() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().deleteAll();
+            }
+        });
+    }
+
+    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
+        return allNotes;
     }
 
     public LiveData<String> getTitle() {
@@ -82,55 +123,4 @@ public class NotesViewModel extends AndroidViewModel {
     public void setColor(int color) {
         this.color.setValue(color);
     }
-
-    //    private void subscribeToAllNotes(){
-//        allNotes = noteDao.getLiveAllSortedDateDesc();
-//    }
-
-    public void addNewNote() {
-        if (title.getValue().trim().isEmpty()){
-            String content = this.content.getValue().concat(" ");
-            title.setValue(content.substring(0, content.indexOf(' ')));
-        }
-        db.noteRoomDao().insert(new NoteRoom(title.getValue(), content.getValue(), color.getValue()));
-//        noteDao.addNote(new Note(title.getValue(), content.getValue(), color.getValue()));
-    }
-
-    public void updateNote(int id) {
-//        Note note = realm.where(Note.class).equalTo("id", id).findFirst();
-//        if (note == null) {
-//            addNewNote();
-//        } else {
-//            note.setTitle(title.getValue());
-//            note.setContent(content.getValue());
-//            note.setColor(color.getValue());
-//            noteDao.updateNote(note);
-//        }
-        db.noteRoomDao().update(id, title.getValue(), content.getValue(), color.getValue());
-    }
-
-    public void deleteNote(int id) {
-        db.noteRoomDao().delete(id);
-    }
-
-    public void deleteAllNotes() {
-//        noteDao.deleteAllNotes();
-        db.noteRoomDao().deleteAll();
-    }
-
-//    public LiveRealmData getLiveAllNotes () {
-//        return allNotes;
-//    }
-
-    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
-        return db.noteRoomDao().getAllNotesLastModifiedFirst();
-//        return noteDao.getAllSortedDateDesc();
-    }
-
-    @Override
-    protected void onCleared() {
-        realm.close();
-        super.onCleared();
-    }
-
 }

@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,24 +29,43 @@ import aleksandrkim.yandextestprep.R;
 
 public class NoteComposeFragment extends Fragment {
 
-    NotesViewModel notesFeedViewModel;
-    String currentNoteId;
+    String TAG = "NoteComposeFragment";
+    private NotesViewModel notesFeedViewModel;
+    private int currentNoteId = -1;
 
-    EditText etTitle, etContent;
+    private EditText etTitle, etContent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setRetainInstance(true);
         View v = inflater.inflate(R.layout.fragment_note_compose, container, false);
         etTitle = v.findViewById(R.id.tv_title);
         etContent = v.findViewById(R.id.tv_content);
 
         init();
         setEt();
-//        bindEtToViewModel();
         bindViewModelToEt();
 
         return v;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "onDestroy: ");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        Log.i(TAG, "onDetach: ");
+        super.onDetach();
+    }
+
+    @Override
+    public void onStop() {
+        Log.i(TAG, "onStop: ");
+        super.onStop();
     }
 
     private void init() {
@@ -55,7 +75,7 @@ public class NoteComposeFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if (bundle != null)
-            currentNoteId = bundle.getString(getString(R.string.current_note_id_key));
+            currentNoteId = bundle.getInt(getString(R.string.current_note_id_key), -1);
 
         notesFeedViewModel = ViewModelProviders.of(this).get(NotesViewModel.class);
     }
@@ -64,21 +84,6 @@ public class NoteComposeFragment extends Fragment {
         etTitle.setText(notesFeedViewModel.getTitle().getValue());
         etContent.setText(notesFeedViewModel.getContent().getValue());
     }
-
-//    private void bindEtToViewModel() {
-//        notesFeedViewModel.getTitle().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                etTitle.setText(s);
-//            }
-//        });
-//        notesFeedViewModel.getContent().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                etContent.setText(s);
-//            }
-//        });
-//    }
 
     private void bindViewModelToEt() {
         etTitle.addTextChangedListener(new TextWatcher() {
@@ -122,7 +127,7 @@ public class NoteComposeFragment extends Fragment {
             return;
         }
 
-        if (currentNoteId == null)
+        if (currentNoteId == -1)
             notesFeedViewModel.addNewNote();
         else
             notesFeedViewModel.updateNote(currentNoteId);
@@ -163,31 +168,18 @@ public class NoteComposeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_save:
                 saveNote();
-                getFragmentManager().popBackStack();
+                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+                getActivity().getSupportFragmentManager().popBackStackImmediate(null, 0);
+                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 return true;
             case R.id.menu_color_pick:
                 changeColorTag();
                 return true;
             default:
-                getFragmentManager().popBackStack();
+                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+                getActivity().getSupportFragmentManager().popBackStackImmediate(null, 0);
+                Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 return true;
         }
     }
-
-    public static class ColorPickerDialogFragment extends DialogFragment {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            String [] colors = new String []{"White", "Red", "Yellow", "Green", "Cyan", "Blue", "Magenta", "Dark Gray", "Black"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.pick_color)
-                    .setItems(colors, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
 }

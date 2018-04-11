@@ -2,6 +2,7 @@ package aleksandrkim.yandextestprep.Db;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,18 +21,18 @@ public class NoteRoom {
     private String title;
     private String content;
     private int color;
-    private Date lastModified;
+    private long lastModified;
 
     public NoteRoom(String title, String content, int color) {
         this.title = title;
         this.content = content;
         this.color = color;
-        this.lastModified = Calendar.getInstance().getTime();
+        this.lastModified = Calendar.getInstance().getTimeInMillis();
     }
 
     public boolean equals(NoteRoom obj) {
         return this.id == obj.id && this.title.equals(obj.getTitle()) && this.content.equals(obj.getContent())
-                && this.color == obj.getColor() && this.lastModified.getTime() == obj.getLastModified().getTime();
+                && this.color == obj.getColor() && this.lastModified == obj.getLastModified();
     }
 
     public int getId() {
@@ -66,16 +67,29 @@ public class NoteRoom {
         this.color = color;
     }
 
-    public Date getLastModified() {
-        return lastModified;
-    }
-
     public String getLastModifiedString() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM", new Locale("Ru"));
+//        return simpleDateFormat.format(Converters.fromTimestamp(lastModified));
         return simpleDateFormat.format(lastModified);
     }
 
-    public void setLastModified(Date lastModified) {
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public static class Converters {
+        @TypeConverter
+        public static Date fromTimestamp(Long value) {
+            return value == null ? null : new Date(value);
+        }
+
+        @TypeConverter
+        public static Long dateToTimestamp(Date date) {
+            return date == null ? null : date.getTime();
+        }
     }
 }

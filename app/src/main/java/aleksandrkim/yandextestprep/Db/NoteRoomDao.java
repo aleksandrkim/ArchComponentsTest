@@ -29,9 +29,6 @@ public interface NoteRoomDao {
     @Query("SELECT * from noteroom where id = :id")
     LiveData<NoteRoom> getNote(int id);
 
-    @Query("SELECT * from noteroom where id = :id")
-    MutableLiveData<NoteRoom> getMutableNote(int id);
-
     @Insert
     void insert(NoteRoom noteRoom);
 

@@ -3,6 +3,7 @@ package aleksandrkim.yandextestprep.NoteFeed;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
     List<NoteRoom> notes;
 
     public void setNotes (final List<NoteRoom> newNotes) {
+        Log.i("FeedAdapter", "setNotes: " + newNotes.size());
         if (this.notes == null) {
             this.notes = newNotes;
             notifyItemRangeInserted(0, newNotes.size());
@@ -61,7 +63,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
 
     @Override
     public int getItemCount() {
-        return notes.size();
+        return notes == null ? 0 : notes.size();
     }
 
     @Override
