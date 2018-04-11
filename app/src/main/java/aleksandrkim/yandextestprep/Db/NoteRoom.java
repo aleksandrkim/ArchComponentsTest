@@ -24,6 +24,7 @@ public class NoteRoom {
     private long lastModified;
 
     public NoteRoom(String title, String content, int color) {
+        this.id = -1;
         this.title = title;
         this.content = content;
         this.color = color;

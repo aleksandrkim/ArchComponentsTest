@@ -29,8 +29,9 @@ import aleksandrkim.yandextestprep.R;
 
 public class NoteComposeFragment extends Fragment {
 
-    final String TAG = "NoteComposeFragment";
+    private final String TAG = "NoteComposeFragment";
     private NotesFeedVM notesFeedViewModel;
+    private MenuItem colorPickerMenu;
 
     private EditText etTitle, etContent;
 
@@ -134,7 +135,7 @@ public class NoteComposeFragment extends Fragment {
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.note_compose_menu, menu);
-
+        colorPickerMenu = menu.getItem(0);
         notesFeedViewModel.getColor().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer integer) {
@@ -156,18 +157,6 @@ public class NoteComposeFragment extends Fragment {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDetach() {
-        Log.i(TAG, "onDetach: ");
-        super.onDetach();
     }
 
     @Override

@@ -2,86 +2,86 @@ package aleksandrkim.yandextestprep.Db;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for YandexTestPrep
  */
 
-public class NotesFeedVM extends AndroidViewModel{
+public class NotesFeedVM extends AndroidViewModel {
 
     private AppDatabase db;
-    private String title, content;
-    private MutableLiveData<Integer> color;
 
     private NoteRoom currentNote;
+    private MutableLiveData<Integer> color;
     private LiveData<List<NoteRoom>> allNotes;
 
     public NotesFeedVM(Application application) {
         super(application);
-        initFields();
-        subscribeToNotes();
+        init();
+        subscribeToNotesLastModified();
     }
 
-    public void subscribeToNotes() {
+    private void init(){
+        db = AppDatabase.getDb(this.getApplication());
+        color = new MutableLiveData<>();
+        color.setValue(-1);
+    }
+
+    public void subscribeToNotesLastModified() {
         allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
     }
 
-    private void initFields() {
-        color = new MutableLiveData<>();
-        color.setValue(-1);
-        db = AppDatabase.getDb(this.getApplication());
+    public void subscribeToNotesLastCreated() {
+        allNotes = db.noteRoomDao().getAllNotesLastCreatedFirst();
     }
 
     public void setCurrentNote(final int index) {
         currentNote = allNotes.getValue().get(index);
-        title = (currentNote.getTitle());
-        content = (currentNote.getContent());
         color.setValue(currentNote.getColor());
     }
 
     public boolean hasEitherField() {
-        if ((title == null || title.trim().isEmpty()) && (content == null || content.trim().isEmpty()))
+        if (currentNote.getTitle().trim().isEmpty() && currentNote.getContent().trim().isEmpty())
             return false;
         return true;
     }
 
-    public void addNewNote() {
-        if (title.trim().isEmpty()) {
-            String content = this.content.concat(" ");
-            title = (content.substring(0, content.indexOf(' ')));
-        }
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                db.noteRoomDao().insert(new NoteRoom(title, content, color.getValue()));
-            }
-        });
+    public void resetTempNoteFields() {
+        currentNote = new NoteRoom("", "", -1);
     }
 
-    public void updateNote(final int id) {
-        currentNote.setTitle(title);
-        currentNote.setContent(content);
-        currentNote.setColor(color.getValue());
+    public void addNewNote() {
+        if (currentNote.getTitle().trim().isEmpty()) {
+            String content = currentNote.getContent().concat(" ");
+            currentNote.setTitle(content.substring(0, content.indexOf(' ')));
+        }
+        currentNote.setColor(getColor().getValue());
+        if (currentNote.getId() == -1)
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    db.noteRoomDao().insert(currentNote);
+                }
+            });
+        else
+            updateNote();
+
+    }
+
+    public void updateNote() {
+        currentNote.setLastModified(Calendar.getInstance().getTime().getTime());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 db.noteRoomDao().update(currentNote);
             }
         });
-    }
-
-    public void resetTempNoteFields() {
-        currentNote = new NoteRoom("","", -1);
-        title = content = "";
-        color.setValue(-1); // базовый цвет - белый
     }
 
     public NoteRoom getCurrentNote() {
@@ -107,19 +107,19 @@ public class NotesFeedVM extends AndroidViewModel{
     }
 
     public String getTitle() {
-        return title;
+        return currentNote.getTitle();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        currentNote.setTitle(title);
     }
 
     public String getContent() {
-        return content;
+        return currentNote.getContent();
     }
 
     public void setContent(String content) {
-        this.content = content;
+        currentNote.setContent(content);
     }
 
     public LiveData<List<NoteRoom>> getAllNotesSortModified() {
@@ -132,5 +132,6 @@ public class NotesFeedVM extends AndroidViewModel{
 
     public void setColor(int color) {
         this.color.setValue(color);
+//        currentNote.setColor(color);
     }
 }
