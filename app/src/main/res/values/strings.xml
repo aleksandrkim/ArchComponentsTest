@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">YandexTestPrep</string>
+    <string name="menu_delete_all">Удалить все</string>
+
+    <string name="delete">Удалить</string>
+    <string name="new_note">Новая заметка</string>
+    <string name="note_feed">Все заметки</string>
+    <string name="save">Сохранить</string>
+    <string name="pick_color">Выделить цветом</string>
+
+    <!--Font families-->
+    <string name="font_family_light">sans-serif-light</string>
+    <string name="font_family_medium">sans-serif-medium</string>
+    <string name="font_family_regular">sans-serif</string>
+    <string name="font_family_condensed">sans-serif-condensed</string>
+    <string name="font_family_black">sans-serif-black</string>
+    <string name="font_family_thin">sans-serif-thin</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="cannot_save_empty_note">Невозмжно сохранить пустую заметку</string>
+
+    <string name="input_title">Название заметки</string>
+    <string name="input_content">Текст заметки</string>
+
+    <string name="current_note_id_key">CurrentNoteIdKey</string>
+</resources>
