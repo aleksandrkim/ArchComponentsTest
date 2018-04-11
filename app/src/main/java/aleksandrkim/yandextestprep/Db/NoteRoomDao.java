@@ -21,10 +21,10 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface NoteRoomDao {
 
     @Query("SELECT * FROM NoteRoom ORDER BY id DESC")
-    List<LiveData<NoteRoom>> getAllNotesLastCreatedFirst();
+    LiveData<List<NoteRoom>> getAllNotesLastCreatedFirst();
 
     @Query("SELECT * FROM NoteRoom ORDER BY lastModified DESC")
-    List<LiveData<NoteRoom>> getAllNotesLastModifiedFirst();
+    LiveData<List<NoteRoom>> getAllNotesLastModifiedFirst();
 
     @Query("SELECT * from noteroom where id = :id")
     LiveData<NoteRoom> getNote(int id);

@@ -1,15 +1,16 @@
 package aleksandrkim.yandextestprep.NoteFeed;
 
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Gravity;
@@ -21,6 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import java.util.List;
+
+import aleksandrkim.yandextestprep.Db.NoteRoom;
 import aleksandrkim.yandextestprep.Db.NotesViewModel;
 import aleksandrkim.yandextestprep.NoteCompose.NoteComposeFragment;
 import aleksandrkim.yandextestprep.R;
@@ -29,7 +33,9 @@ public class NoteFeedFragment extends Fragment {
 
     private NotesViewModel noteFeedViewModel;
     private RecyclerView recyclerView;
-    private NoteFeedAdapter noteFeedAdapter;
+//    private NoteFeedAdapter feedAdapter;
+    private FeedAdapter feedAdapter;
+
 
     private FloatingActionButton fab;
 
@@ -75,23 +81,25 @@ public class NoteFeedFragment extends Fragment {
     }
 
     private void setRecyclerView() {
-        initRecyclerView();
+        initRecycler();
         setRecyclerViewSwipe();
-
-//        notes.addChangeListener(new RealmChangeListener<RealmResults<Note>>() {
-//            @Override
-//            public void onChange(RealmResults<Note> notes) {
-//                recyclerViewLayoutManager.scrollToPositionWithOffset(0, 0);
-//            }
-//        });
+        populateRecycler();
     }
 
-    private void initRecyclerView() {
-        noteFeedAdapter = new NoteFeedAdapter(noteFeedViewModel.getAllNotes());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(noteFeedAdapter);
+    private void initRecycler() {
+        feedAdapter = new FeedAdapter();
+        recyclerView.setAdapter(feedAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+    }
+
+    private void populateRecycler(){
+        noteFeedViewModel.getAllNotesSortModified().observe(this, new Observer<List<NoteRoom>>() {
+            @Override
+            public void onChanged(@Nullable List<NoteRoom> noteRooms) {
+                feedAdapter.setNotes(noteRooms);
+            }
+        });
     }
 
     private void setRecyclerViewSwipe() {
@@ -103,7 +111,7 @@ public class NoteFeedFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                noteFeedViewModel.deleteNote(((NoteFeedAdapter.NoteFeedVH) viewHolder).id);
+                noteFeedViewModel.deleteNote(((FeedAdapter.NoteFeedVH) viewHolder).id);
             }
 
             /** При свайпе, двинается только передняя часть ряда и ведна иконка корзини на заднем плане
@@ -113,12 +121,12 @@ public class NoteFeedFragment extends Fragment {
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 if (viewHolder != null)
-                    getDefaultUIUtil().onSelected(((NoteFeedAdapter.NoteFeedVH) viewHolder).viewForeground);
+                    getDefaultUIUtil().onSelected(((FeedAdapter.NoteFeedVH) viewHolder).viewForeground);
             }
 
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                getDefaultUIUtil().clearView(((NoteFeedAdapter.NoteFeedVH) viewHolder).viewForeground);
+                getDefaultUIUtil().clearView(((FeedAdapter.NoteFeedVH) viewHolder).viewForeground);
             }
 
             /** В зависимости от направления свайпа меняет положение иконки корзины (гравитация)*/
@@ -127,7 +135,7 @@ public class NoteFeedFragment extends Fragment {
                                     RecyclerView.ViewHolder viewHolder, float dX, float dY,
                                     int actionState, boolean isCurrentlyActive) {
 
-                NoteFeedAdapter.NoteFeedVH sourceVh = (NoteFeedAdapter.NoteFeedVH) viewHolder;
+                FeedAdapter.NoteFeedVH sourceVh = (FeedAdapter.NoteFeedVH) viewHolder;
                 FrameLayout.LayoutParams l = (FrameLayout.LayoutParams) sourceVh.deleteIcon.getLayoutParams();
                 l.gravity = dX > 0 ? Gravity.START | Gravity.CENTER_VERTICAL : Gravity.END | Gravity.CENTER_VERTICAL;
                 sourceVh.deleteIcon.setLayoutParams(l);

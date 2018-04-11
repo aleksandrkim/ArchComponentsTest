@@ -23,7 +23,7 @@ public class NotesViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> color;
 
     private AppDatabase db;
-    private MutableLiveData<NoteRoom> noteRoomLiveData;
+    private LiveData<NoteRoom> noteRoomLiveData;
 //    private LiveRealmData allNotes;
 
     public NotesViewModel(Application application) {
@@ -46,8 +46,8 @@ public class NotesViewModel extends AndroidViewModel {
         db = AppDatabase.getDb(this.getApplication());
     }
 
-    public void getCurrentNote (int id) {
-        noteRoomLiveData = db.noteRoomDao().getMutableNote(id);
+    public void pullNoteInfo(int id) {
+        noteRoomLiveData = db.noteRoomDao().getNote(id);
         title.setValue(noteRoomLiveData.getValue().getTitle());
         content.setValue(noteRoomLiveData.getValue().getContent());
         color.setValue(noteRoomLiveData.getValue().getColor());
@@ -122,7 +122,7 @@ public class NotesViewModel extends AndroidViewModel {
 //        return allNotes;
 //    }
 
-    public List<LiveData<NoteRoom>> getAllNotes() {
+    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
         return db.noteRoomDao().getAllNotesLastModifiedFirst();
 //        return noteDao.getAllSortedDateDesc();
     }
