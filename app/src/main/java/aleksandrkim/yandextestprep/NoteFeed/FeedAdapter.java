@@ -21,7 +21,12 @@ import aleksandrkim.yandextestprep.R;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
 
-    List<NoteRoom> notes;
+    private List<NoteRoom> notes;
+    private RecyclerItemClickListener recyclerItemClickListener;
+
+    public FeedAdapter (RecyclerItemClickListener recyclerItemClickListener){
+        this.recyclerItemClickListener = recyclerItemClickListener;
+    }
 
     public void setNotes (final List<NoteRoom> newNotes) {
         Log.i("FeedAdapter", "setNotes: " + newNotes.size());
@@ -58,7 +63,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
     @Override
     public NoteFeedVH onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_feed_row, parent, false);
-        return new NoteFeedVH(v);
+        final NoteFeedVH noteFeedVH = new NoteFeedVH(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerItemClickListener.onItemClick(view,  noteFeedVH.getAdapterPosition());
+            }
+        });
+        Log.i("FeedAdapter", "onCreateViewHolder: ");
+        return noteFeedVH;
     }
 
     @Override
@@ -68,6 +81,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
 
     @Override
     public void onBindViewHolder(NoteFeedVH holder, int position) {
+        Log.i("FeedAdapter", "onBindViewHolder: ");
         final NoteRoom note = notes.get(position);
         holder.id = note.getId();
         holder.title.setText(note.getTitle());
@@ -78,8 +92,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {
         holder.colorStrip.getBackground().setTint(note.getColor());
     }
 
-
-    class NoteFeedVH extends RecyclerView.ViewHolder{
+    static class NoteFeedVH extends RecyclerView.ViewHolder{
         int id;
         TextView title, content, date;
         View colorStrip;

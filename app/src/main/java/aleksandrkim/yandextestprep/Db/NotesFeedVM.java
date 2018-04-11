@@ -1,4 +1,4 @@
-package aleksandrkim.yandextestprep.NoteCompose;
+package aleksandrkim.yandextestprep.Db;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -7,43 +7,46 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import aleksandrkim.yandextestprep.Db.AppDatabase;
-import aleksandrkim.yandextestprep.Db.NoteRoom;
+import java.util.List;
 
 /**
- * Created by Aleksandr Kim on 10 Apr, 2018 1:59 PM for YandexTestPrep
+ * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for YandexTestPrep
  */
 
-public class NoteComposeVM extends AndroidViewModel {
+public class NotesFeedVM extends AndroidViewModel {
 
+    private AppDatabase db;
     private MutableLiveData<String> title;
     private MutableLiveData<String> content;
     private MutableLiveData<Integer> color;
 
-    private AppDatabase db;
-    private LiveData<NoteRoom> noteRoomLiveData;
+    private NoteRoom currentNote;
+    private LiveData<List<NoteRoom>> allNotes;
 
-    public NoteComposeVM(Application application) {
+    public NotesFeedVM(Application application) {
         super(application);
-        Log.d("ViewModel", "started");
         initFields();
+        subscribeToNotes();
+    }
+
+    public void subscribeToNotes(){
+        Log.d("ViewModel", "subscribed");
+        allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
     }
 
     private void initFields() {
         title = new MutableLiveData<>();
-        title.setValue("");
         content = new MutableLiveData<>();
-        content.setValue("");
         color = new MutableLiveData<>();
-        color.setValue(-1); // базовый цвет - белый
+        resetTempNoteFields();
         db = AppDatabase.getDb(this.getApplication());
     }
 
-    public void pullNoteInfo(int id) {
-        noteRoomLiveData = db.noteRoomDao().getNote(id);
-        title.setValue(noteRoomLiveData.getValue().getTitle());
-        content.setValue(noteRoomLiveData.getValue().getContent());
-        color.setValue(noteRoomLiveData.getValue().getColor());
+    public void setCurrentNote(int index) {
+        currentNote = allNotes.getValue().get(index);
+        title.setValue(currentNote.getTitle());
+        content.setValue(currentNote.getContent());
+        color.setValue(currentNote.getColor());
     }
 
     public boolean hasEitherField() {
@@ -61,6 +64,7 @@ public class NoteComposeVM extends AndroidViewModel {
             @Override
             public void run() {
                 db.noteRoomDao().insert(new NoteRoom(title.getValue(), content.getValue(), color.getValue()));
+                resetTempNoteFields();
             }
         });
     }
@@ -70,6 +74,36 @@ public class NoteComposeVM extends AndroidViewModel {
             @Override
             public void run() {
                 db.noteRoomDao().update(id, title.getValue(), content.getValue(), color.getValue());
+                resetTempNoteFields();
+            }
+        });
+    }
+
+    public void resetTempNoteFields(){
+        currentNote = null;
+        title.setValue("");
+        content.setValue("");
+        color.setValue(-1); // базовый цвет - белый
+    }
+
+    public NoteRoom getCurrentNote() {
+        return currentNote;
+    }
+
+    public void deleteNote(final int id) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().delete(id);
+            }
+        });
+    }
+
+    public void deleteAllNotes() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().deleteAll();
             }
         });
     }
@@ -97,4 +131,9 @@ public class NoteComposeVM extends AndroidViewModel {
     public void setColor(int color) {
         this.color.setValue(color);
     }
+
+    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
+        return allNotes;
+    }
+
 }

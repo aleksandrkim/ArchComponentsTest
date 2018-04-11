@@ -14,7 +14,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +26,7 @@ import android.widget.FrameLayout;
 import java.util.List;
 
 import aleksandrkim.yandextestprep.Db.NoteRoom;
+import aleksandrkim.yandextestprep.Db.NotesFeedVM;
 import aleksandrkim.yandextestprep.NoteCompose.NoteComposeFragment;
 import aleksandrkim.yandextestprep.R;
 
@@ -61,7 +61,7 @@ public class NotesFeedFragment extends Fragment {
         getActivity().setTitle(getString(R.string.note_feed));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        noteFeedViewModel = ViewModelProviders.of(this).get(NotesFeedVM.class);
+        noteFeedViewModel = ViewModelProviders.of(getActivity()).get(NotesFeedVM.class);
     }
 
     private void setFab() {
@@ -88,7 +88,13 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void initRecycler() {
-        feedAdapter = new FeedAdapter();
+        feedAdapter = new FeedAdapter(new RecyclerItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                noteFeedViewModel.setCurrentNote(position);
+                launchNoteComposeFragment();
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(feedAdapter);
         recyclerView.setHasFixedSize(true);

@@ -21,12 +21,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import aleksandrkim.yandextestprep.Db.NotesFeedVM;
 import aleksandrkim.yandextestprep.R;
 
 public class NoteComposeFragment extends Fragment {
 
     String TAG = "NoteComposeFragment";
-    private NoteComposeVM notesFeedViewModel;
+    private NotesFeedVM notesFeedViewModel;
     private int currentNoteId = -1;
 
     private EditText etTitle, etContent;
@@ -46,34 +47,12 @@ public class NoteComposeFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "onDestroy: ");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        Log.i(TAG, "onDetach: ");
-        super.onDetach();
-    }
-
-    @Override
-    public void onStop() {
-        Log.i(TAG, "onStop: ");
-        super.onStop();
-    }
-
     private void init() {
         setHasOptionsMenu(true);
         getActivity().setTitle(getString(R.string.new_note));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Bundle bundle = getArguments();
-        if (bundle != null)
-            currentNoteId = bundle.getInt(getString(R.string.current_note_id_key), -1);
-
-        notesFeedViewModel = ViewModelProviders.of(this).get(NoteComposeVM.class);
+        notesFeedViewModel = ViewModelProviders.of(getActivity()).get(NotesFeedVM.class);
     }
 
     private void setEt(){
@@ -165,7 +144,7 @@ public class NoteComposeFragment extends Fragment {
             case R.id.menu_save:
                 saveNote();
                 Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                getActivity().getSupportFragmentManager().popBackStackImmediate(null, 0);
+                getActivity().getSupportFragmentManager().popBackStack();
                 Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 return true;
             case R.id.menu_color_pick:
@@ -173,7 +152,7 @@ public class NoteComposeFragment extends Fragment {
                 return true;
             default:
                 Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                getActivity().getSupportFragmentManager().popBackStackImmediate(null, 0);
+                getActivity().getSupportFragmentManager().popBackStack();
                 Log.i("onOptions", " " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                 return true;
         }
