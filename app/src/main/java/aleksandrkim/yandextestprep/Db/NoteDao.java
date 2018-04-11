@@ -1,7 +1,5 @@
 package aleksandrkim.yandextestprep.Db;
 
-import android.util.Log;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;

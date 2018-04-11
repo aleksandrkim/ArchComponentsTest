@@ -61,18 +61,18 @@ public class NoteComposeFragment extends Fragment {
     }
 
     private void setEt(){
-        etTitle.setText(notesFeedViewModel.getNewTitle().getValue());
-        etContent.setText(notesFeedViewModel.getNewContent().getValue());
+        etTitle.setText(notesFeedViewModel.getTitle().getValue());
+        etContent.setText(notesFeedViewModel.getContent().getValue());
     }
 
 //    private void bindEtToViewModel() {
-//        notesFeedViewModel.getNewTitle().observe(this, new Observer<String>() {
+//        notesFeedViewModel.getTitle().observe(this, new Observer<String>() {
 //            @Override
 //            public void onChanged(@Nullable String s) {
 //                etTitle.setText(s);
 //            }
 //        });
-//        notesFeedViewModel.getNewContent().observe(this, new Observer<String>() {
+//        notesFeedViewModel.getContent().observe(this, new Observer<String>() {
 //            @Override
 //            public void onChanged(@Nullable String s) {
 //                etContent.setText(s);
@@ -89,7 +89,7 @@ public class NoteComposeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                notesFeedViewModel.setNewTitle(s.toString());
+                notesFeedViewModel.setTitle(s.toString());
             }
 
             @Override
@@ -106,7 +106,7 @@ public class NoteComposeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                notesFeedViewModel.setNewContent(s.toString());
+                notesFeedViewModel.setContent(s.toString());
             }
 
             @Override
@@ -138,7 +138,7 @@ public class NoteComposeFragment extends Fragment {
         builder.setTitle(R.string.pick_color)
                 .setItems(colorTitles, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        notesFeedViewModel.setNewColor(colors[which]);
+                        notesFeedViewModel.setColor(colors[which]);
                     }
                 });
         builder.create().show();
@@ -149,7 +149,7 @@ public class NoteComposeFragment extends Fragment {
         menu.clear();
         inflater.inflate(R.menu.note_compose_menu, menu);
 
-        notesFeedViewModel.getNewColor().observe(this, new Observer<Integer>() {
+        notesFeedViewModel.getColor().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer integer) {
                 menu.getItem(0).getIcon().setTint(integer);
