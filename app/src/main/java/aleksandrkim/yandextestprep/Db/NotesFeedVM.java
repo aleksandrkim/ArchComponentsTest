@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.List;
@@ -54,27 +55,33 @@ public class NotesFeedVM extends AndroidViewModel {
 
     public void resetTempNoteFields() {
         currentNote = new NoteRoom("", "", -1);
+        color.setValue(-1);
+        Log.i("NotesFeedVM", "resetTempNoteFields: " + currentNote.getId());
     }
 
-    public void addNewNote() {
+    public void addOrUpdateCurrentNote() {
         if (currentNote.getTitle().trim().isEmpty()) {
             String content = currentNote.getContent().concat(" ");
             currentNote.setTitle(content.substring(0, content.indexOf(' ')));
         }
         currentNote.setColor(getColor().getValue());
-        if (currentNote.getId() == -1)
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    db.noteRoomDao().insert(currentNote);
-                }
-            });
+        if (currentNote.getId() == 0)
+            insertNote();
         else
             updateNote();
 
     }
 
-    public void updateNote() {
+    private void insertNote(){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                db.noteRoomDao().insert(currentNote);
+            }
+        });
+    }
+
+    private void updateNote() {
         currentNote.setLastModified(Calendar.getInstance().getTime().getTime());
         AsyncTask.execute(new Runnable() {
             @Override

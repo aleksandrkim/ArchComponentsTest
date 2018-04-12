@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,11 +32,28 @@ import aleksandrkim.yandextestprep.R;
 
 public class NotesFeedFragment extends Fragment {
 
-    private NotesFeedVM noteFeedViewModel;
-    private RecyclerView recyclerView;
-    private FeedAdapter feedAdapter;
+    private final String TAG = "FeedFragment";
 
+    private NotesFeedVM noteFeedViewModel;
+    private FeedAdapter feedAdapter;
+    private LinearLayoutManager adapterLayoutManager;
+    private ItemTouchHelper itemTouchHelper;
+
+    private RecyclerView recyclerView;
     private FloatingActionButton fab;
+
+    private boolean wasDeleted;
+    private boolean toScroll;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate: ");
+        init();
+        initAdapter();
+        initItemTouchHelper();
+        observeLastModified();
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +62,6 @@ public class NotesFeedFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
-        init();
 
         setFab();
         setRecyclerView();
@@ -79,12 +94,11 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void setRecyclerView() {
-        initRecycler();
-        setRecyclerViewSwipe();
-        populateRecycler();
+        setRecycler();
+        initItemTouchHelper();
     }
 
-    private void initRecycler() {
+    private void initAdapter() {
         feedAdapter = new FeedAdapter(new RecyclerItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -92,22 +106,38 @@ public class NotesFeedFragment extends Fragment {
                 launchNoteComposeFragment();
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void setRecycler() {
+        adapterLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(feedAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void populateRecycler() {
+    private void observeLastModified() {
         noteFeedViewModel.getAllNotesSortModified().observe(this, new Observer<List<NoteRoom>>() {
             @Override
             public void onChanged(@Nullable List<NoteRoom> noteRooms) {
-                feedAdapter.setNotes(noteRooms);
+                Log.i("observeLastModified", String.valueOf(wasDeleted));
+                if (feedAdapter.getItemCount() <= noteRooms.size() && feedAdapter.getItemCount() > 0)
+                    toScroll = true;
+                Log.i("populate", "prev " + feedAdapter.getItemCount() + "new " + noteRooms.size());
+//                if (feedAdapter.getItemCount() > 0)
+                    feedAdapter.setNotes(noteRooms);
+
+                if (toScroll) {
+                    adapterLayoutManager.scrollToPositionWithOffset(0, 0);
+                    toScroll = false;
+                    Log.i("populate", "scrolled");
+                }
             }
         });
     }
 
-    private void setRecyclerViewSwipe() {
+    private void initItemTouchHelper() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -116,6 +146,7 @@ public class NotesFeedFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                wasDeleted = true;
                 noteFeedViewModel.deleteNote(((FeedAdapter.NoteFeedVH) viewHolder).id);
             }
 
@@ -149,8 +180,7 @@ public class NotesFeedFragment extends Fragment {
                         actionState, isCurrentlyActive);
             }
         };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
     }
 
     @Override
@@ -171,4 +201,24 @@ public class NotesFeedFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        Log.i("NotesFeedFragment", "onDestroyView: ");
+//        Log.i("NotesFeedFragment", "before removeObs: " + feedAdapter.getItemCount());
+//        noteFeedViewModel.getAllNotesSortModified().removeObservers(this);
+//        Log.i("NotesFeedFragment", "after removeObs: " + feedAdapter.getItemCount());
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onStop() {
+        Log.i("NotesFeedFragment", "onStop: ");
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        Log.i("NotesFeedFragment", "onPause: ");
+        super.onPause();
+    }
 }
