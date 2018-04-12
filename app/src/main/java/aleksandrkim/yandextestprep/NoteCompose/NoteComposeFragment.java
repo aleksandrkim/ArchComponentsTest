@@ -157,7 +157,6 @@ public class NoteComposeFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.i(TAG, "onSaveInstanceState: ");
         outState.putInt(getString(R.string.saved_color_choice), notesFeedViewModel.getColor().getValue());
         super.onSaveInstanceState(outState);
     }

@@ -56,7 +56,6 @@ public class NotesFeedVM extends AndroidViewModel {
     public void resetTempNoteFields() {
         currentNote = new NoteRoom("", "", -1);
         color.setValue(-1);
-        Log.i("NotesFeedVM", "resetTempNoteFields: " + currentNote.getId());
     }
 
     public void addOrUpdateCurrentNote() {

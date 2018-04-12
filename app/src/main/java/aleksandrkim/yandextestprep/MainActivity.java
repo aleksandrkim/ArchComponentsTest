@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.i("MainActivity", "onBackPressed: " + getSupportFragmentManager().getBackStackEntryCount());
         if (getSupportFragmentManager().getBackStackEntryCount() < 2)
             finish();
         super.onBackPressed();

@@ -13,7 +13,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +46,6 @@ public class NotesFeedFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate: ");
         init();
         initAdapter();
         initItemTouchHelper();
@@ -121,17 +119,14 @@ public class NotesFeedFragment extends Fragment {
         noteFeedViewModel.getAllNotesSortModified().observe(this, new Observer<List<NoteRoom>>() {
             @Override
             public void onChanged(@Nullable List<NoteRoom> noteRooms) {
-                Log.i("observeLastModified", String.valueOf(wasDeleted));
                 if (feedAdapter.getItemCount() <= noteRooms.size() && feedAdapter.getItemCount() > 0)
-                    toScroll = true;
-                Log.i("populate", "prev " + feedAdapter.getItemCount() + "new " + noteRooms.size());
-//                if (feedAdapter.getItemCount() > 0)
-                    feedAdapter.setNotes(noteRooms);
+                    toScroll = true; // only scroll when items are updated or added
+
+                feedAdapter.setNotes(noteRooms);
 
                 if (toScroll) {
                     adapterLayoutManager.scrollToPositionWithOffset(0, 0);
                     toScroll = false;
-                    Log.i("populate", "scrolled");
                 }
             }
         });
@@ -201,24 +196,4 @@ public class NotesFeedFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        Log.i("NotesFeedFragment", "onDestroyView: ");
-//        Log.i("NotesFeedFragment", "before removeObs: " + feedAdapter.getItemCount());
-//        noteFeedViewModel.getAllNotesSortModified().removeObservers(this);
-//        Log.i("NotesFeedFragment", "after removeObs: " + feedAdapter.getItemCount());
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onStop() {
-        Log.i("NotesFeedFragment", "onStop: ");
-        super.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        Log.i("NotesFeedFragment", "onPause: ");
-        super.onPause();
-    }
 }
