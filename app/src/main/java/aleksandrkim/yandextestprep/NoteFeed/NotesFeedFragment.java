@@ -31,8 +31,6 @@ import aleksandrkim.yandextestprep.R;
 
 public class NotesFeedFragment extends Fragment {
 
-    private final String TAG = "FeedFragment";
-
     private NotesFeedVM noteFeedViewModel;
     private FeedAdapter feedAdapter;
     private LinearLayoutManager adapterLayoutManager;
@@ -41,7 +39,6 @@ public class NotesFeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
 
-    private boolean wasDeleted;
     private boolean toScroll;
 
     @Override
@@ -141,7 +138,6 @@ public class NotesFeedFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                wasDeleted = true;
                 noteFeedViewModel.deleteNote(((FeedAdapter.NoteFeedVH) viewHolder).id);
             }
 

@@ -5,7 +5,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.List;
@@ -36,10 +35,6 @@ public class NotesFeedVM extends AndroidViewModel {
 
     public void subscribeToNotesLastModified() {
         allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
-    }
-
-    public void subscribeToNotesLastCreated() {
-        allNotes = db.noteRoomDao().getAllNotesLastCreatedFirst();
     }
 
     public void setCurrentNote(final int index) {
@@ -88,10 +83,6 @@ public class NotesFeedVM extends AndroidViewModel {
                 db.noteRoomDao().update(currentNote);
             }
         });
-    }
-
-    public NoteRoom getCurrentNote() {
-        return currentNote;
     }
 
     public void deleteNote(final int id) {

@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,9 +22,7 @@ import aleksandrkim.yandextestprep.R;
 
 public class NoteComposeFragment extends Fragment {
 
-    private final String TAG = "NoteComposeFragment";
     private NotesFeedVM notesFeedViewModel;
-    private MenuItem colorPickerMenu;
 
     private EditText etTitle, etContent;
 
@@ -40,7 +35,6 @@ public class NoteComposeFragment extends Fragment {
         etContent = v.findViewById(R.id.tv_content);
 
         init(savedInstanceState);
-//        bindViewModelToEt();
 
         return v;
     }
@@ -59,42 +53,6 @@ public class NoteComposeFragment extends Fragment {
     private void setEt() {
         etTitle.setText(notesFeedViewModel.getTitle());
         etContent.setText(notesFeedViewModel.getContent());
-    }
-
-    private void bindViewModelToEt() {
-        etTitle.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                notesFeedViewModel.setTitle(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-        etContent.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                notesFeedViewModel.setContent(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
     }
 
     private void saveNote() {
@@ -131,7 +89,6 @@ public class NoteComposeFragment extends Fragment {
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.note_compose_menu, menu);
-        colorPickerMenu = menu.getItem(0);
         notesFeedViewModel.getColor().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer integer) {
