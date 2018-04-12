@@ -1,8 +1,7 @@
 <resources>
-    <string name="app_name">YandexTestPrep</string>
+    <string name="app_name">ArchComponentsTest</string>
     <string name="menu_delete_all">Удалить все</string>
 
-    <string name="delete">Удалить</string>
     <string name="new_note">Новая заметка</string>
     <string name="note_feed">Все заметки</string>
     <string name="save">Сохранить</string>
@@ -22,6 +21,5 @@
     <string name="input_title">Название заметки</string>
     <string name="input_content">Текст заметки</string>
 
-    <string name="current_note_id_key">CurrentNoteIdKey</string>
     <string name="saved_color_choice">SavedColorChoice</string>
 </resources>

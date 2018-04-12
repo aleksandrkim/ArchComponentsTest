@@ -1,14 +1,13 @@
-package aleksandrkim.yandextestprep;
+package aleksandrkim.ArchComponentsTest;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
-import aleksandrkim.yandextestprep.Db.NotesFeedVM;
-import aleksandrkim.yandextestprep.NoteFeed.NotesFeedFragment;
+import aleksandrkim.ArchComponentsTest.Db.NotesFeedVM;
+import aleksandrkim.ArchComponentsTest.NoteFeed.NotesFeedFragment;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package aleksandrkim.yandextestprep.NoteFeed;
+package aleksandrkim.ArchComponentsTest.NoteFeed;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.util.DiffUtil;
@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import aleksandrkim.yandextestprep.Db.NoteRoom;
-import aleksandrkim.yandextestprep.R;
+import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.R;
 
 /**
- * Created by Aleksandr Kim on 11 Apr, 2018 8:29 PM for YandexTestPrep
+ * Created by Aleksandr Kim on 11 Apr, 2018 8:29 PM for ArchComponentsTest
  */
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.NoteFeedVH> {

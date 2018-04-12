@@ -1,4 +1,4 @@
-package aleksandrkim.yandextestprep.NoteFeed;
+package aleksandrkim.ArchComponentsTest.NoteFeed;
 
 
 import android.arch.lifecycle.Observer;
@@ -24,14 +24,12 @@ import android.widget.FrameLayout;
 
 import java.util.List;
 
-import aleksandrkim.yandextestprep.Db.NoteRoom;
-import aleksandrkim.yandextestprep.Db.NotesFeedVM;
-import aleksandrkim.yandextestprep.NoteCompose.NoteComposeFragment;
-import aleksandrkim.yandextestprep.R;
+import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.Db.NotesFeedVM;
+import aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment;
+import aleksandrkim.ArchComponentsTest.R;
 
 public class NotesFeedFragment extends Fragment {
-
-    private final String TAG = "FeedFragment";
 
     private NotesFeedVM noteFeedViewModel;
     private FeedAdapter feedAdapter;
@@ -41,7 +39,6 @@ public class NotesFeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
 
-    private boolean wasDeleted;
     private boolean toScroll;
 
     @Override
@@ -141,7 +138,6 @@ public class NotesFeedFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                wasDeleted = true;
                 noteFeedViewModel.deleteNote(((FeedAdapter.NoteFeedVH) viewHolder).id);
             }
 

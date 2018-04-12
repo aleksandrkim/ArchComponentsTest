@@ -1,18 +1,18 @@
-package aleksandrkim.yandextestprep.Db;
+package aleksandrkim.ArchComponentsTest.Db;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for YandexTestPrep
+ * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for ArchComponentsTest
  */
+
 
 public class NotesFeedVM extends AndroidViewModel {
 
@@ -36,10 +36,6 @@ public class NotesFeedVM extends AndroidViewModel {
 
     public void subscribeToNotesLastModified() {
         allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
-    }
-
-    public void subscribeToNotesLastCreated() {
-        allNotes = db.noteRoomDao().getAllNotesLastCreatedFirst();
     }
 
     public void setCurrentNote(final int index) {
@@ -88,10 +84,6 @@ public class NotesFeedVM extends AndroidViewModel {
                 db.noteRoomDao().update(currentNote);
             }
         });
-    }
-
-    public NoteRoom getCurrentNote() {
-        return currentNote;
     }
 
     public void deleteNote(final int id) {

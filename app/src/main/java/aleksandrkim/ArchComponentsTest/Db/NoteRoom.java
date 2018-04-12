@@ -1,16 +1,14 @@
-package aleksandrkim.yandextestprep.Db;
+package aleksandrkim.ArchComponentsTest.Db;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Aleksandr Kim on 11 Apr, 2018 6:27 PM for YandexTestPrep
+ * Created by Aleksandr Kim on 11 Apr, 2018 6:27 PM for ArchComponentsTest
  */
 
 @Entity
@@ -78,17 +76,5 @@ public class NoteRoom {
 
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
-    }
-
-    public static class Converters {
-        @TypeConverter
-        public static Date fromTimestamp(Long value) {
-            return value == null ? null : new Date(value);
-        }
-
-        @TypeConverter
-        public static Long dateToTimestamp(Date date) {
-            return date == null ? null : date.getTime();
-        }
     }
 }
