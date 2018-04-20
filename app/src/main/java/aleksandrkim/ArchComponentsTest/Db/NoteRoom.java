@@ -2,6 +2,7 @@ package aleksandrkim.ArchComponentsTest.Db;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.v7.util.DiffUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,4 +78,16 @@ public class NoteRoom {
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
+
+    public static final DiffUtil.ItemCallback<NoteRoom> DIFF_ITEM_CALLBACK = new DiffUtil.ItemCallback<NoteRoom>() {
+        @Override
+        public boolean areItemsTheSame(NoteRoom oldItem, NoteRoom newItem) {
+            return oldItem.getId() == newItem.getId();
+        }
+
+        @Override
+        public boolean areContentsTheSame(NoteRoom oldItem, NoteRoom newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 }

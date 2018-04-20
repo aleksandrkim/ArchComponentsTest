@@ -3,7 +3,6 @@ package aleksandrkim.ArchComponentsTest.NoteCompose;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -70,16 +69,11 @@ public class NoteComposeFragment extends Fragment {
     }
 
     private void changeColorTag() {
-        final String[] colorTitles = new String[]{"White", "Red", "Magenta", "Yellow", "Green",
-                "Cyan", "Blue", "Dark Gray"};
-        final int[] colors = new int[]{Color.WHITE, Color.RED, Color.MAGENTA, Color.YELLOW, Color.GREEN,
-                Color.CYAN, Color.BLUE, Color.DKGRAY};
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.pick_color)
-                .setItems(colorTitles, new DialogInterface.OnClickListener() {
+                .setItems(Colors.colorTitles, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        notesFeedViewModel.setColor(colors[which]);
+                        notesFeedViewModel.setColor(Colors.colors[which]);
                     }
                 });
         builder.create().show();

@@ -4,15 +4,17 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 import android.os.AsyncTask;
 
 import java.util.Calendar;
-import java.util.List;
+
+import aleksandrkim.ArchComponentsTest.NoteCompose.Colors;
 
 /**
  * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for ArchComponentsTest
  */
-
 
 public class NotesFeedVM extends AndroidViewModel {
 
@@ -20,33 +22,37 @@ public class NotesFeedVM extends AndroidViewModel {
 
     private NoteRoom currentNote;
     private MutableLiveData<Integer> color;
-    private LiveData<List<NoteRoom>> allNotes;
+//    private LiveData<List<NoteRoom>> allNotes;
+
+    private LiveData<PagedList<NoteRoom>> pagedNotes;
 
     public NotesFeedVM(Application application) {
         super(application);
         init();
-        subscribeToNotesLastModified();
     }
 
-    private void init(){
+    private void init() {
         db = AppDatabase.getDb(this.getApplication());
         color = new MutableLiveData<>();
         color.setValue(-1);
     }
 
-    public void subscribeToNotesLastModified() {
-        allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
+//    public void subscribeToNotesLastModified() {
+//        allNotes = db.noteRoomDao().getAllNotesLastModifiedFirst();
+//    }
+
+    public void subscribeToPagedNotes(int pageSize) {
+        pagedNotes = new LivePagedListBuilder<>(db.noteRoomDao().getNotesPagedLastModifiedFirst(), pageSize).build();
     }
 
     public void setCurrentNote(final int index) {
-        currentNote = allNotes.getValue().get(index);
+//        currentNote = allNotes.getValue().get(index);
+        currentNote = pagedNotes.getValue().get(index);
         color.setValue(currentNote.getColor());
     }
 
     public boolean hasEitherField() {
-        if (currentNote.getTitle().trim().isEmpty() && currentNote.getContent().trim().isEmpty())
-            return false;
-        return true;
+        return !(currentNote.getTitle().trim().isEmpty() && currentNote.getContent().trim().isEmpty());
     }
 
     public void resetTempNoteFields() {
@@ -61,17 +67,29 @@ public class NotesFeedVM extends AndroidViewModel {
         }
         currentNote.setColor(getColor().getValue());
         if (currentNote.getId() == 0)
-            insertNote();
+            addNote();
         else
             updateNote();
 
     }
 
-    private void insertNote(){
+    private void addNote() {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                db.noteRoomDao().insert(currentNote);
+                db.noteRoomDao().add(currentNote);
+            }
+        });
+    }
+
+    public void addSampleNotes(final int count) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < count; i++) {
+                    NoteRoom noteRoom = new NoteRoom("sample", "content", Colors.colors[i % Colors.colors.length]);
+                    db.noteRoomDao().add(noteRoom);
+                }
             }
         });
     }
@@ -120,8 +138,12 @@ public class NotesFeedVM extends AndroidViewModel {
         currentNote.setContent(content);
     }
 
-    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
-        return allNotes;
+//    public LiveData<List<NoteRoom>> getAllNotesSortModified() {
+//        return allNotes;
+//    }
+
+    public LiveData<PagedList<NoteRoom>> getAllPagedNotes() {
+        return pagedNotes;
     }
 
     public MutableLiveData<Integer> getColor() {
@@ -130,6 +152,5 @@ public class NotesFeedVM extends AndroidViewModel {
 
     public void setColor(int color) {
         this.color.setValue(color);
-//        currentNote.setColor(color);
     }
 }
