@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
-import aleksandrkim.ArchComponentsTest.Db.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment;
+import aleksandrkim.ArchComponentsTest.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.R;
 
 public class NotesFeedFragment extends Fragment {
@@ -47,7 +47,7 @@ public class NotesFeedFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        init();
+        noteFeedViewModel = ViewModelProviders.of(requireActivity()).get(NotesFeedVM.class);
         prepareRecycler();
         observePagedList();
     }
@@ -58,25 +58,20 @@ public class NotesFeedFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
-
-        setFab();
-        bindRecycler();
-
-        return v;
-    }
-
-    private void init() {
         setHasOptionsMenu(true);
         requireActivity().setTitle(getString(R.string.note_feed));
 
-        noteFeedViewModel = ViewModelProviders.of(requireActivity()).get(NotesFeedVM.class);
+        setFab();
+        setRecycler();
+
+        return v;
     }
 
     private void prepareRecycler() {
         OnListUpdatedListener onListUpdatedListener = new OnListUpdatedListener() {
             @Override
             public void onListUpdated(int listSize) {
-                if (adapterLayoutManager.findFirstVisibleItemPosition() < 1 && listSize > 0) {
+                if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
                     // if the list was at the top, scroll upwards to show newly added items
                     adapterLayoutManager.scrollToPositionWithOffset(0, 0);
                 }
@@ -115,7 +110,7 @@ public class NotesFeedFragment extends Fragment {
         });
     }
 
-    private void bindRecycler() {
+    private void setRecycler() {
         adapterLayoutManager = new LinearLayoutManager(requireActivity());
         recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(pagedAdapter);

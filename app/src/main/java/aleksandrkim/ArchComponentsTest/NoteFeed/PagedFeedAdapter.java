@@ -55,7 +55,7 @@ public class PagedFeedAdapter extends PagedListAdapter<NoteRoom, NoteFeedVH> {
     public void onBindViewHolder(@NonNull NoteFeedVH holder, int position) {
         NoteRoom noteRoom = getItem(position);
         if (noteRoom != null) {
-            holder.bind(getItem(position));
+            holder.bind(noteRoom);
         } else {
             holder.clear();
         }

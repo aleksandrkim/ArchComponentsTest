@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import aleksandrkim.ArchComponentsTest.Db.NotesFeedVM;
+import aleksandrkim.ArchComponentsTest.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.R;
 
 public class NoteComposeFragment extends Fragment {

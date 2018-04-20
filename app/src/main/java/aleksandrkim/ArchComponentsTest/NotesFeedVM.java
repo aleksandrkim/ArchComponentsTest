@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Db;
+package aleksandrkim.ArchComponentsTest;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 
 import java.util.Calendar;
 
+import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
+import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
 import aleksandrkim.ArchComponentsTest.NoteCompose.Colors;
 
 /**
@@ -17,6 +19,8 @@ import aleksandrkim.ArchComponentsTest.NoteCompose.Colors;
  */
 
 public class NotesFeedVM extends AndroidViewModel {
+
+    private final String TAG = "ViewModel";
 
     private AppDatabase db;
 
