@@ -3,8 +3,11 @@ package aleksandrkim.ArchComponentsTest.NoteFeed;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
+import android.arch.paging.PagedListAdapter;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -22,8 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.List;
-
 import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
 import aleksandrkim.ArchComponentsTest.Db.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment;
@@ -31,43 +32,77 @@ import aleksandrkim.ArchComponentsTest.R;
 
 public class NotesFeedFragment extends Fragment {
 
+    private final String TAG = "NotesFeedFragment";
+
     private NotesFeedVM noteFeedViewModel;
-    private FeedAdapter feedAdapter;
     private LinearLayoutManager adapterLayoutManager;
     private ItemTouchHelper itemTouchHelper;
 
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
 
-    private boolean toScroll;
+    private PagedListAdapter<NoteRoom, NoteFeedVH> pagedAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        init();
-        initAdapter();
-        initItemTouchHelper();
-        observeLastModified();
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        init();
+        prepareRecycler();
+        observePagedList();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setRetainInstance(true);
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
 
         setFab();
-        setRecyclerView();
+        bindRecycler();
+
         return v;
     }
 
     private void init() {
         setHasOptionsMenu(true);
-        getActivity().setTitle(getString(R.string.note_feed));
+        requireActivity().setTitle(getString(R.string.note_feed));
 
-        noteFeedViewModel = ViewModelProviders.of(getActivity()).get(NotesFeedVM.class);
+        noteFeedViewModel = ViewModelProviders.of(requireActivity()).get(NotesFeedVM.class);
+    }
+
+    private void prepareRecycler() {
+        OnListUpdatedListener onListUpdatedListener = new OnListUpdatedListener() {
+            @Override
+            public void onListUpdated(int listSize) {
+                if (adapterLayoutManager.findFirstVisibleItemPosition() < 1 && listSize > 0) {
+                    // if the list was at the top, scroll upwards to show newly added items
+                    adapterLayoutManager.scrollToPositionWithOffset(0, 0);
+                }
+            }
+        };
+
+        RecyclerItemClickListener itemClickListener = new RecyclerItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                noteFeedViewModel.setCurrentNote(position);
+                launchNoteComposeFragment();
+            }
+        };
+
+        pagedAdapter = new PagedFeedAdapter(itemClickListener, onListUpdatedListener);
+        initItemTouchHelper();
+    }
+
+    private void observePagedList() {
+        noteFeedViewModel.subscribeToPagedNotes(20);
+        noteFeedViewModel.getAllPagedNotes().observe(this, new Observer<PagedList<NoteRoom>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<NoteRoom> noteRooms) {
+                pagedAdapter.submitList(noteRooms);
+            }
+        });
     }
 
     private void setFab() {
@@ -80,53 +115,21 @@ public class NotesFeedFragment extends Fragment {
         });
     }
 
+    private void bindRecycler() {
+        adapterLayoutManager = new LinearLayoutManager(requireActivity());
+        recyclerView.setLayoutManager(adapterLayoutManager);
+        recyclerView.setAdapter(pagedAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
     private void launchNoteComposeFragment() {
-        getActivity().getSupportFragmentManager().beginTransaction()
+        requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_frame, new NoteComposeFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    private void setRecyclerView() {
-        setRecycler();
-        initItemTouchHelper();
-    }
-
-    private void initAdapter() {
-        feedAdapter = new FeedAdapter(new RecyclerItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                noteFeedViewModel.setCurrentNote(position);
-                launchNoteComposeFragment();
-            }
-        });
-    }
-
-    private void setRecycler() {
-        adapterLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(adapterLayoutManager);
-        recyclerView.setAdapter(feedAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-    }
-
-    private void observeLastModified() {
-        noteFeedViewModel.getAllNotesSortModified().observe(this, new Observer<List<NoteRoom>>() {
-            @Override
-            public void onChanged(@Nullable List<NoteRoom> noteRooms) {
-                if (feedAdapter.getItemCount() <= noteRooms.size() && feedAdapter.getItemCount() > 0)
-                    toScroll = true; // only scroll when items are updated or added
-
-                feedAdapter.setNotes(noteRooms);
-
-                if (toScroll) {
-                    adapterLayoutManager.scrollToPositionWithOffset(0, 0);
-                    toScroll = false;
-                }
-            }
-        });
     }
 
     private void initItemTouchHelper() {
@@ -138,7 +141,7 @@ public class NotesFeedFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                noteFeedViewModel.deleteNote(((FeedAdapter.NoteFeedVH) viewHolder).id);
+                noteFeedViewModel.deleteNote(((NoteFeedVH) viewHolder).getId());
             }
 
             /** При свайпе, двинается только передняя часть ряда и ведна иконка корзини на заднем плане
@@ -148,12 +151,12 @@ public class NotesFeedFragment extends Fragment {
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 if (viewHolder != null)
-                    getDefaultUIUtil().onSelected(((FeedAdapter.NoteFeedVH) viewHolder).viewForeground);
+                    getDefaultUIUtil().onSelected(((NoteFeedVH) viewHolder).getViewForeground());
             }
 
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                getDefaultUIUtil().clearView(((FeedAdapter.NoteFeedVH) viewHolder).viewForeground);
+                getDefaultUIUtil().clearView(((NoteFeedVH) viewHolder).getViewForeground());
             }
 
             /** В зависимости от направления свайпа меняет положение иконки корзины (гравитация)*/
@@ -161,16 +164,15 @@ public class NotesFeedFragment extends Fragment {
             public void onChildDraw(Canvas c, RecyclerView recyclerView,
                                     RecyclerView.ViewHolder viewHolder, float dX, float dY,
                                     int actionState, boolean isCurrentlyActive) {
+                NoteFeedVH sourceVh = (NoteFeedVH) viewHolder;
+                FrameLayout.LayoutParams l = (FrameLayout.LayoutParams) sourceVh.getDeleteIcon().getLayoutParams();
+                l.gravity = dX > 0 ? (Gravity.START | Gravity.CENTER_VERTICAL) : (Gravity.END | Gravity.CENTER_VERTICAL);
+                sourceVh.getDeleteIcon().setLayoutParams(l);
 
-                FeedAdapter.NoteFeedVH sourceVh = (FeedAdapter.NoteFeedVH) viewHolder;
-                FrameLayout.LayoutParams l = (FrameLayout.LayoutParams) sourceVh.deleteIcon.getLayoutParams();
-                l.gravity = dX > 0 ? Gravity.START | Gravity.CENTER_VERTICAL : Gravity.END | Gravity.CENTER_VERTICAL;
-                sourceVh.deleteIcon.setLayoutParams(l);
-
-                getDefaultUIUtil().onDraw(c, recyclerView, sourceVh.viewForeground, dX, dY,
-                        actionState, isCurrentlyActive);
+                getDefaultUIUtil().onDraw(c, recyclerView, sourceVh.getViewForeground(), dX, dY, actionState, isCurrentlyActive);
             }
         };
+
         itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
     }
 
@@ -186,6 +188,9 @@ public class NotesFeedFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_erase_all:
                 noteFeedViewModel.deleteAllNotes();
+                return true;
+            case R.id.menu_add_20:
+                noteFeedViewModel.addSampleNotes(20);
                 return true;
             default:
                 return false;

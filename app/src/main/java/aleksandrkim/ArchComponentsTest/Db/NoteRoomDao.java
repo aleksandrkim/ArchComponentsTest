@@ -1,6 +1,7 @@
 package aleksandrkim.ArchComponentsTest.Db;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -23,8 +24,11 @@ public interface NoteRoomDao {
     @Query("SELECT * FROM NoteRoom ORDER BY lastModified DESC")
     LiveData<List<NoteRoom>> getAllNotesLastModifiedFirst();
 
+    @Query("SELECT * FROM NoteRoom ORDER BY lastModified DESC")
+    DataSource.Factory<Integer, NoteRoom> getNotesPagedLastModifiedFirst();
+
     @Insert
-    void insert(NoteRoom noteRoom);
+    void add(NoteRoom noteRoom);
 
     @Query("DELETE FROM NoteRoom")
     void deleteAll();
