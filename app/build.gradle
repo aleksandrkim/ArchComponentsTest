@@ -22,21 +22,44 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+ext {
+    supportLibraryVersion = '27.1.1'
+    butterknifeVersion = '8.8.1'
+    rxJavaVersion = '2.1.13'
+    rxAndroidVersion = '2.0.2'
+    roomVersion = '1.1.0'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
 
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    //region SupportLibs
+    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:support-v4:$supportLibraryVersion"
+    //endregion
+
+    //region Room
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    implementation 'com.android.support:support-v4:27.1.1'
+    annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
+    //endregion
+
+    //region ButterKnife
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    //endregion
+
+    implementation "com.android.support.constraint:constraint-layout:1.1.0"
 
     implementation "android.arch.lifecycle:extensions:1.1.1"
 
-    implementation "android.arch.paging:runtime:1.0.0-beta1"
+    implementation "android.arch.paging:runtime:1.0.0"
 }

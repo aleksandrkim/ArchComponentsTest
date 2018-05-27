@@ -6,9 +6,14 @@
               android:padding="@dimen/material_typography_edge_padding"
               tools:context="aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:src="@drawable/circle"
+        android:id="@+id/color_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <EditText
-        android:id="@+id/tv_title"
+        android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@string/font_family_medium"
@@ -18,7 +23,7 @@
         android:textSize="@dimen/material_typography_subheading"/>
 
     <EditText
-        android:id="@+id/tv_content"
+        android:id="@+id/et_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"

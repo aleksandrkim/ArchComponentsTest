@@ -1,7 +1,7 @@
 package aleksandrkim.ArchComponentsTest;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewModelProviders.of(this).get(NotesFeedVM.class);
-
         if (savedInstanceState == null) {
             launchFeedFragment();
         }
@@ -34,10 +32,26 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    public interface BackEnabled {
+        void onBackPressed(); // to handle back button in fragments' methods
+    }
+
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() < 2)
             finish();
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
+        if (currentFragment instanceof BackEnabled) {
+            ((BackEnabled) currentFragment).onBackPressed();
+        }
+
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return true;
     }
 }

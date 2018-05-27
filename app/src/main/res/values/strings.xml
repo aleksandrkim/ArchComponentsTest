@@ -23,4 +23,7 @@
     <string name="input_content">Текст заметки</string>
 
     <string name="saved_color_choice">SavedColorChoice</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

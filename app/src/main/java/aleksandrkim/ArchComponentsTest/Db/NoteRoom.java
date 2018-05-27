@@ -29,9 +29,11 @@ public class NoteRoom {
         this.lastModified = Calendar.getInstance().getTimeInMillis();
     }
 
-    public boolean equals(NoteRoom obj) {
-        return this.id == obj.id && this.title.equals(obj.getTitle()) && this.content.equals(obj.getContent())
-                && this.color == obj.getColor() && this.lastModified == obj.getLastModified();
+    public void setTitleIfEmpty () {
+        if (getTitle().trim().isEmpty()) {
+            String content = getContent().concat(" ");
+            setTitle(content.substring(0, content.indexOf(' ')));
+        }
     }
 
     public int getId() {
@@ -90,4 +92,9 @@ public class NoteRoom {
             return oldItem.equals(newItem);
         }
     };
+
+    private boolean equals(NoteRoom obj) {
+        return this.id == obj.id && this.title.equals(obj.getTitle()) && this.content.equals(obj.getContent())
+                && this.color == obj.getColor() && this.lastModified == obj.getLastModified();
+    }
 }

@@ -23,8 +23,8 @@ public class NoteFeedVH extends RecyclerView.ViewHolder {
     NoteFeedVH(View itemView) {
         super(itemView);
         colorStrip = itemView.findViewById(R.id.color_strip);
-        title = itemView.findViewById(R.id.tv_title);
-        content = itemView.findViewById(R.id.tv_content);
+        title = itemView.findViewById(R.id.et_title);
+        content = itemView.findViewById(R.id.et_content);
         date = itemView.findViewById(R.id.tv_date);
         viewForeground = itemView.findViewById(R.id.view_foreground);
         deleteIcon = itemView.findViewById(R.id.delete_icon);

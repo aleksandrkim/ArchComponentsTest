@@ -10,6 +10,6 @@
         android:radius="5dp" />
 
     <size
-        android:width="4dp"
-        android:height="@dimen/material_typography_tile_height"/>
+        android:width="22dp"
+        android:height="22dp"/>
 </shape>

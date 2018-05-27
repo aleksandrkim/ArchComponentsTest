@@ -31,24 +31,18 @@ public class PagedFeedAdapter extends PagedListAdapter<NoteRoom, NoteFeedVH> {
     public NoteFeedVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_feed_row, parent, false);
         final NoteFeedVH noteFeedVH = new NoteFeedVH(v);
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerItemClickListener.onItemClick(view, noteFeedVH.getAdapterPosition());
-            }
-        });
+        v.setOnClickListener(view -> recyclerItemClickListener.onItemClick(noteFeedVH.getAdapterPosition()));
         return noteFeedVH;
-    }
-
-    @Override
-    public void submitList(PagedList<NoteRoom> pagedList) {
-        super.submitList(pagedList);
     }
 
     @Override
     public void onCurrentListChanged(@Nullable PagedList<NoteRoom> currentList) {
         super.onCurrentListChanged(currentList);
         onListUpdatedListener.onListUpdated(currentList.size());
+    }
+
+    public NoteRoom getNote(int position) {
+        return getItem(position);
     }
 
     @Override
