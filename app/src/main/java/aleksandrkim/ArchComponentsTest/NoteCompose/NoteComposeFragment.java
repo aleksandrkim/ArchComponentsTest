@@ -140,7 +140,6 @@ public class NoteComposeFragment extends Fragment implements MainActivity.BackEn
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: ");
         saveNote();
     }
 
