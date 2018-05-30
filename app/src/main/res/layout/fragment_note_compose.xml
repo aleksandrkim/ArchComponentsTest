@@ -6,12 +6,6 @@
               android:padding="@dimen/material_typography_edge_padding"
               tools:context="aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment">
 
-    <ImageView
-        android:src="@drawable/circle"
-        android:id="@+id/color_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
     <EditText
         android:id="@+id/et_title"
         android:layout_width="match_parent"

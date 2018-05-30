@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest;
+package aleksandrkim.ArchComponentsTest.HostActivity;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 
 import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
 import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
-import aleksandrkim.ArchComponentsTest.NoteCompose.Colors;
+import aleksandrkim.ArchComponentsTest.Utils.Colors;
 
 /**
  * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for ArchComponentsTest

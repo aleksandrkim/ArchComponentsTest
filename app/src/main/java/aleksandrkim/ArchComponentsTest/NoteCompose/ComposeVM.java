@@ -17,7 +17,7 @@ import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
 
 public class ComposeVM extends AndroidViewModel {
 
-    private final String TAG = "ComposeVM";
+    private static final String TAG = "ComposeVM";
 
     private AppDatabase db;
 
@@ -30,15 +30,14 @@ public class ComposeVM extends AndroidViewModel {
         color = new MutableLiveData<>();
     }
 
-    void setCurrentNote(final int id, boolean hasSavedColor, @Nullable Integer savedColor) {
+    void setCurrentNote(final int id, @Nullable Integer savedColor) {
         AsyncTask.execute(() -> {
             currentNote = id == -1
                     ? new NoteRoom("", "", -1)
                     : db.noteRoomDao().getNoteById(id);
-            if (!hasSavedColor) {
-                color.postValue(currentNote.getColor());
-            } else
-                color.postValue(savedColor);
+            color.postValue(savedColor == null
+                    ? currentNote.getColor()
+                    : savedColor);
         });
     }
 

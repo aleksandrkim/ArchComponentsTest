@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteCompose;
+package aleksandrkim.ArchComponentsTest.Utils;
 
 import android.graphics.Color;
 

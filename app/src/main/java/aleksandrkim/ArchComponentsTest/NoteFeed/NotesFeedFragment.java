@@ -1,38 +1,32 @@
 package aleksandrkim.ArchComponentsTest.NoteFeed;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
-import android.graphics.Canvas;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
+import aleksandrkim.ArchComponentsTest.HostActivity.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment;
-import aleksandrkim.ArchComponentsTest.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
 
 public class NotesFeedFragment extends Fragment {
-
-    private final String TAG = "NotesFeedFragment";
+    public static final String TAG = "NotesFeedFragment";
+    NavigationActivity navigationActivity;
 
     private NotesFeedVM noteFeedViewModel;
     private LinearLayoutManager adapterLayoutManager;
@@ -43,6 +37,13 @@ public class NotesFeedFragment extends Fragment {
 
     private PagedFeedAdapter pagedAdapter;
 
+    public static NotesFeedFragment newInstance() {
+        NotesFeedFragment fragment = new NotesFeedFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,58 +52,52 @@ public class NotesFeedFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        requireActivity().setTitle(getString(R.string.note_feed));
-        AppCompatActivity appCompatActivity = (AppCompatActivity) requireActivity();
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-    }
-
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: ");
         setRetainInstance(true);
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
-
-        observePagedList();
-        setFab();
-        setRecycler();
-
         return v;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        navigationActivity = (NavigationActivity) requireActivity();
+        navigationActivity.setTitle(R.string.note_feed);
+        navigationActivity.setUpButton(false);
+        setFab();
+        setRecycler();
+        observePagedList();
+    }
+
     private void prepareRecycler() {
+
         // if the list was at the top, scroll upwards to show newly added items
         OnListUpdatedListener onListUpdatedListener = listSize -> {
             if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
                 adapterLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         };
-
-        RecyclerItemClickListener itemClickListener = (position) -> {
-            NoteRoom selectedNote = pagedAdapter.getNote(position);
-            launchNoteComposeFragment(selectedNote.getId());
-        };
-
+        RecyclerItemClickListener itemClickListener = (pos) -> launchNoteComposeFragment(pagedAdapter.getNote(pos).getId());
         pagedAdapter = new PagedFeedAdapter(itemClickListener, onListUpdatedListener);
-        itemTouchHelper = initItemTouchHelper();
+
+        SwipeCallback swipeCallback = new SwipeCallback(
+                (viewHolder, holder) -> noteFeedViewModel.deleteNote(((NoteFeedVH) viewHolder).getId()));
+        itemTouchHelper = new ItemTouchHelper(swipeCallback);
     }
 
     private void observePagedList() {
         noteFeedViewModel.subscribeToPagedNotes(20);
-        Observer<PagedList<NoteRoom>> allNotesObserver = noteRooms -> {
-            pagedAdapter.submitList(noteRooms);
-            Log.d(TAG, "observed: " + noteRooms.size());
-        };
+//        Observer<PagedList<NoteRoom>> allNotesObserver = noteRooms -> {
+//            pagedAdapter.submitList(noteRooms);
+//        };
 
-        if (!noteFeedViewModel.getAllPagedNotes().hasObservers()) {
-            Log.d(TAG, "attached obs: ");
-            noteFeedViewModel.getAllPagedNotes().observe(this, allNotesObserver);
-        }
+//        if (!noteFeedViewModel.getAllPagedNotes().hasObservers()) {
+        noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> pagedAdapter.submitList(noteRooms));
+//        }
     }
 
     private void setFab() {
@@ -110,61 +105,16 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void setRecycler() {
-        adapterLayoutManager = new LinearLayoutManager(requireActivity());
+        adapterLayoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(pagedAdapter);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration((Context) navigationActivity, DividerItemDecoration.HORIZONTAL));
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void launchNoteComposeFragment(int noteId) {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, NoteComposeFragment.newInstance(noteId))
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private ItemTouchHelper initItemTouchHelper() {
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                noteFeedViewModel.deleteNote(((NoteFeedVH) viewHolder).getId());
-            }
-
-            /** OnSwipe the foreground view is moved and the background is exposed */
-            @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                if (viewHolder != null)
-                    getDefaultUIUtil().onSelected(((NoteFeedVH) viewHolder).getViewForeground());
-            }
-
-            @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                getDefaultUIUtil().clearView(((NoteFeedVH) viewHolder).getViewForeground());
-            }
-
-            /** Changes the location of the deleteIcon depending on the direction of the swipe */
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView,
-                                    RecyclerView.ViewHolder viewHolder, float dX, float dY,
-                                    int actionState, boolean isCurrentlyActive) {
-                NoteFeedVH sourceVh = (NoteFeedVH) viewHolder;
-                FrameLayout.LayoutParams l = (FrameLayout.LayoutParams) sourceVh.getDeleteIcon().getLayoutParams();
-                l.gravity = dX > 0 ? (Gravity.START | Gravity.CENTER_VERTICAL) : (Gravity.END | Gravity.CENTER_VERTICAL);
-                sourceVh.getDeleteIcon().setLayoutParams(l);
-
-                getDefaultUIUtil().onDraw(c, recyclerView, sourceVh.getViewForeground(), dX, dY, actionState, isCurrentlyActive);
-            }
-        };
-
-        return new ItemTouchHelper(simpleItemTouchCallback);
+        navigationActivity.launchWholeFragment(NoteComposeFragment.newInstance(noteId), NoteComposeFragment.TAG);
     }
 
     @Override
@@ -187,7 +137,7 @@ public class NotesFeedFragment extends Fragment {
                 noteFeedViewModel.deleteAllNotes();
                 return true;
             case R.id.menu_add_20:
-                noteFeedViewModel.addSampleNotes(20);
+                noteFeedViewModel.addSampleNotes(5);
                 return true;
             default:
                 return false;

@@ -1,13 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="aleksandrkim.ArchComponentsTest.MainActivity">
-    <item
-        android:id="@+id/menu_save"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_save_24dp"
-        android:title="@string/save"
-        app:showAsAction="always"/>
+      tools:context="aleksandrkim.ArchComponentsTest.HostActivity.MainActivity">
 
     <item
         android:id="@+id/menu_color_pick"

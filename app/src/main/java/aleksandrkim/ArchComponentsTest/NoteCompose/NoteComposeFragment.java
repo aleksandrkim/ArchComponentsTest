@@ -1,12 +1,12 @@
 package aleksandrkim.ArchComponentsTest.NoteCompose;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,59 +15,48 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import aleksandrkim.ArchComponentsTest.MainActivity;
+import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
 import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.ArchComponentsTest.Utils.Colors;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class NoteComposeFragment extends Fragment implements MainActivity.BackEnabled {
-    private static final String TAG = "ComposeFragment";
-    private static final String PARAM_NOTE_ID = "noteIdParam";
+public class NoteComposeFragment extends Fragment implements NavigationActivity.BackEnabled {
+    public static final String TAG = "ComposeFragment";
+    private static final String KEY_NOTE_ID = "noteIdParam";
     private int noteId;
+    private NavigationActivity navigationActivity;
 
     private Unbinder unbinder;
+    @BindView(R.id.et_title) EditText etTitle;
+    @BindView(R.id.et_content) EditText etContent;
 
     private ComposeVM composeViewModel;
 
-    @BindView(R.id.et_title) EditText etTitle;
-    @BindView(R.id.et_content) EditText etContent;
-    @BindView(R.id.color_tag) ImageView colorTag;
-
     public NoteComposeFragment() {}
 
-    public static NoteComposeFragment newInstance(int noteId) {
+    public static NoteComposeFragment newInstance(@Nullable int noteId) {
         NoteComposeFragment fragment = new NoteComposeFragment();
+
         Bundle args = new Bundle();
-        args.putInt(PARAM_NOTE_ID, noteId);
+        args.putInt(KEY_NOTE_ID, noteId);
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null)
-            this.noteId = getArguments().getInt(PARAM_NOTE_ID);
+            this.noteId = getArguments().getInt(KEY_NOTE_ID, -1);
 
         composeViewModel = ViewModelProviders.of(this).get(ComposeVM.class);
-
-        if (savedInstanceState != null) {
-            composeViewModel.setCurrentNote(noteId, true, savedInstanceState.getInt(getString(R.string.saved_color_choice)));
-        } else
-            composeViewModel.setCurrentNote(noteId, false, null);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        requireActivity().setTitle(getString(R.string.new_note));
-        AppCompatActivity appCompatActivity = (AppCompatActivity) requireActivity();
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        composeViewModel.setCurrentNote(noteId,
+                savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_ID) : null);
     }
 
     @Override
@@ -82,6 +71,14 @@ public class NoteComposeFragment extends Fragment implements MainActivity.BackEn
         if (savedInstanceState == null) setEt();
 
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        navigationActivity = (NavigationActivity) requireActivity();
+        navigationActivity.setTitle(R.string.new_note);
+        navigationActivity.setUpButton(true);
     }
 
     private void setEt() {
@@ -104,11 +101,9 @@ public class NoteComposeFragment extends Fragment implements MainActivity.BackEn
     }
 
     private void changeColorTag() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder((Context) navigationActivity);
         builder.setTitle(R.string.pick_color)
-                .setItems(Colors.colorTitles, (dialog, which) -> {
-                    composeViewModel.setColor(Colors.colors[which]);
-                });
+                .setItems(Colors.colorTitles, (dialog, which) -> composeViewModel.setColor(Colors.colors[which]));
         builder.create().show();
     }
 
@@ -127,10 +122,6 @@ public class NoteComposeFragment extends Fragment implements MainActivity.BackEn
                 Log.d(TAG, "onOptionsItemSelected: homeAsUp");
                 saveNote();
                 return false;
-            case R.id.menu_save:
-                saveNote();
-                requireActivity().getSupportFragmentManager().popBackStack();
-                return true;
             case R.id.menu_color_pick:
                 changeColorTag();
                 return true;

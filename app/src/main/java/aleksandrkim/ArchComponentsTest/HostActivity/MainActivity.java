@@ -1,16 +1,19 @@
-package aleksandrkim.ArchComponentsTest;
+package aleksandrkim.ArchComponentsTest.HostActivity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import aleksandrkim.ArchComponentsTest.NoteFeed.NotesFeedFragment;
+import aleksandrkim.ArchComponentsTest.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationActivity {
 
-    private static final String FEED_FRAGMENT_TAG = "FeedFragmentTag";
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,22 +21,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
-            launchFeedFragment();
+            launchWholeFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
         }
     }
 
-    private void launchFeedFragment() {
+    @Override
+    public void launchWholeFragment(@NonNull Fragment fragment, @Nullable String tag) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, new NotesFeedFragment(), FEED_FRAGMENT_TAG)
+                .replace(R.id.fragment_frame, fragment, tag)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    public interface BackEnabled {
-        void onBackPressed(); // to handle back button in fragments' methods
     }
 
     @Override
@@ -47,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+    }
+
+    @Override
+    public void setUpButton(boolean state) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(state);
     }
 
     @Override

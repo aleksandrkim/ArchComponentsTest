@@ -8,12 +8,13 @@ import android.widget.TextView;
 
 import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
 import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:37 PM for ArchComponentsTest
  */
 
-public class NoteFeedVH extends RecyclerView.ViewHolder {
+public class NoteFeedVH extends RecyclerView.ViewHolder implements SwipeCallback.SwipeLayout{
     private int id;
     private TextView title, content, date;
     private View colorStrip;
@@ -34,11 +35,13 @@ public class NoteFeedVH extends RecyclerView.ViewHolder {
         return id;
     }
 
-    ConstraintLayout getViewForeground(){
+    @Override
+    public ConstraintLayout getViewForeground(){
         return viewForeground;
     }
 
-    ImageView getDeleteIcon(){
+    @Override
+    public View getSwipeActionIcon() {
         return deleteIcon;
     }
 
