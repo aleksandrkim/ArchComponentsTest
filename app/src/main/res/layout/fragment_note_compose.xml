@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="@dimen/material_typography_edge_padding"
+              android:padding="@dimen/material_card_content_padding"
               tools:context="aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment">
 
     <EditText

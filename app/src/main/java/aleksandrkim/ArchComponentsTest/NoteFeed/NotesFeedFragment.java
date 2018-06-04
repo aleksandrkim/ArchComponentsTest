@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -74,7 +73,6 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void prepareRecycler() {
-
         // if the list was at the top, scroll upwards to show newly added items
         OnListUpdatedListener onListUpdatedListener = listSize -> {
             if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
@@ -91,13 +89,7 @@ public class NotesFeedFragment extends Fragment {
 
     private void observePagedList() {
         noteFeedViewModel.subscribeToPagedNotes(20);
-//        Observer<PagedList<NoteRoom>> allNotesObserver = noteRooms -> {
-//            pagedAdapter.submitList(noteRooms);
-//        };
-
-//        if (!noteFeedViewModel.getAllPagedNotes().hasObservers()) {
         noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> pagedAdapter.submitList(noteRooms));
-//        }
     }
 
     private void setFab() {
@@ -105,11 +97,10 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void setRecycler() {
-        adapterLayoutManager = new LinearLayoutManager(requireContext());
+        adapterLayoutManager = new LinearLayoutManager((Context) navigationActivity);
         recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(pagedAdapter);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration((Context) navigationActivity, DividerItemDecoration.HORIZONTAL));
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 

@@ -1,7 +1,7 @@
 package aleksandrkim.ArchComponentsTest.NoteFeed;
 
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,18 +9,18 @@ import android.widget.TextView;
 
 import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
 import aleksandrkim.ArchComponentsTest.R;
-import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:37 PM for ArchComponentsTest
  */
 
-public class NoteFeedVH extends RecyclerView.ViewHolder implements SwipeCallback.SwipeLayout{
+public class NoteFeedVH extends RecyclerView.ViewHolder {
     private int id;
     private TextView title, content, date;
     private View colorStrip;
     private ConstraintLayout viewForeground;
     private ImageView deleteIcon;
+    private CardView cardView;
 
     public NoteFeedVH(View itemView) {
         super(itemView);
@@ -30,22 +30,11 @@ public class NoteFeedVH extends RecyclerView.ViewHolder implements SwipeCallback
         date = itemView.findViewById(R.id.tv_date);
         viewForeground = itemView.findViewById(R.id.view_foreground);
         deleteIcon = itemView.findViewById(R.id.delete_icon);
+        cardView = itemView.findViewById(R.id.card_view);
     }
 
     public int getId(){
         return id;
-    }
-
-    @NonNull
-    @Override
-    public ConstraintLayout getViewForeground(){
-        return viewForeground;
-    }
-
-    @NonNull
-    @Override
-    public View getSwipeActionIcon() {
-        return deleteIcon;
     }
 
     void bind(NoteRoom note) {

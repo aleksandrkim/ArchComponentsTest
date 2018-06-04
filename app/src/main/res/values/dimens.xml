@@ -1,6 +1,13 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="material_typography_date">12sp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="material_card_content_height">88dp</dimen>
+    <dimen name="material_card_height">88dp</dimen>
+    <dimen name="material_card_margin">8dp</dimen>
+    <dimen name="material_card_content_padding">12dp</dimen>
+    <dimen name="material_card_content_padding_plus_strip">16dp</dimen>
+    <dimen name="views_spacing">12dp</dimen>
 
     <dimen name="material_typography_button">15sp</dimen>
     <dimen name="material_typography_caption">13sp</dimen>
@@ -13,9 +20,4 @@
     <dimen name="material_typography_display3">56sp</dimen>
     <dimen name="material_typography_display4">112sp</dimen>
 
-    <dimen name="material_typography_edge_padding">16dp</dimen>
-    <dimen name="material_typography_top_bottom_padding">16dp</dimen>
-    <dimen name="material_typography_list_top_bottom_margin">8dp</dimen>
-    <dimen name="material_typography_tile_height">88dp</dimen>
-    <dimen name="material_typography_date_left_margin">4dp</dimen>
 </resources>
