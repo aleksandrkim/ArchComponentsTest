@@ -1,5 +1,6 @@
 package aleksandrkim.ArchComponentsTest.NoteFeed;
 
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,7 +22,7 @@ public class NoteFeedVH extends RecyclerView.ViewHolder implements SwipeCallback
     private ConstraintLayout viewForeground;
     private ImageView deleteIcon;
 
-    NoteFeedVH(View itemView) {
+    public NoteFeedVH(View itemView) {
         super(itemView);
         colorStrip = itemView.findViewById(R.id.color_strip);
         title = itemView.findViewById(R.id.et_title);
@@ -35,11 +36,13 @@ public class NoteFeedVH extends RecyclerView.ViewHolder implements SwipeCallback
         return id;
     }
 
+    @NonNull
     @Override
     public ConstraintLayout getViewForeground(){
         return viewForeground;
     }
 
+    @NonNull
     @Override
     public View getSwipeActionIcon() {
         return deleteIcon;

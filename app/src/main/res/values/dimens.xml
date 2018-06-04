@@ -1,5 +1,6 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="material_typography_date">12sp</dimen>
 
     <dimen name="material_typography_button">15sp</dimen>
     <dimen name="material_typography_caption">13sp</dimen>
