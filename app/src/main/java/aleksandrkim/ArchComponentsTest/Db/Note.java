@@ -1,6 +1,7 @@
 package aleksandrkim.ArchComponentsTest.Db;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.v7.util.DiffUtil;
 
@@ -13,7 +14,7 @@ import java.util.Locale;
  */
 
 @Entity
-public class NoteRoom {
+public class Note {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -21,12 +22,17 @@ public class NoteRoom {
     private String content;
     private int color;
     private long lastModified;
+    private long createdTime;
 
-    public NoteRoom(String title, String content, int color) {
+    @Ignore
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM", new Locale("Ru"));
+
+    public Note(String title, String content, int color) {
         this.title = title;
         this.content = content;
         this.color = color;
         this.lastModified = Calendar.getInstance().getTimeInMillis();
+        this.createdTime = Calendar.getInstance().getTimeInMillis();
     }
 
     public void setTitleIfEmpty () {
@@ -69,8 +75,11 @@ public class NoteRoom {
     }
 
     public String getLastModifiedString() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM", new Locale("Ru"));
         return simpleDateFormat.format(lastModified);
+    }
+
+    public String getCreatedTimeString() {
+        return simpleDateFormat.format(createdTime);
     }
 
     public long getLastModified() {
@@ -81,19 +90,27 @@ public class NoteRoom {
         this.lastModified = lastModified;
     }
 
-    public static final DiffUtil.ItemCallback<NoteRoom> DIFF_ITEM_CALLBACK = new DiffUtil.ItemCallback<NoteRoom>() {
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public static final DiffUtil.ItemCallback<Note> DIFF_ITEM_CALLBACK = new DiffUtil.ItemCallback<Note>() {
         @Override
-        public boolean areItemsTheSame(NoteRoom oldItem, NoteRoom newItem) {
+        public boolean areItemsTheSame(Note oldItem, Note newItem) {
             return oldItem.getId() == newItem.getId();
         }
 
         @Override
-        public boolean areContentsTheSame(NoteRoom oldItem, NoteRoom newItem) {
+        public boolean areContentsTheSame(Note oldItem, Note newItem) {
             return oldItem.equals(newItem);
         }
     };
 
-    private boolean equals(NoteRoom obj) {
+    private boolean equals(Note obj) {
         return this.id == obj.id && this.title.equals(obj.getTitle()) && this.content.equals(obj.getContent())
                 && this.color == obj.getColor() && this.lastModified == obj.getLastModified();
     }

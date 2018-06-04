@@ -37,6 +37,21 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
                 .commit();
     }
 
+//    @Override
+//    public void showSnackbar(int displayTextId, int duration, int actionTextId, View.OnClickListener onActionClicked, Runnable
+//            onDismissed) {
+//        Snackbar.make(findViewById(R.id.coordinator), displayTextId, duration)
+//                .setAction(actionTextId, onActionClicked)
+//                .addCallback(new Snackbar.Callback() {
+//                    @Override
+//                    public void onDismissed(Snackbar transientBottomBar, int event) {
+//                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
+//                            onDismissed.run();
+//                        super.onDismissed(transientBottomBar, event);
+//                    }
+//                }).show();
+//    }
+
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() < 2)

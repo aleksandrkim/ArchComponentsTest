@@ -6,10 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/material_card_height"
     android:layout_margin="@dimen/material_card_margin"
-    android:clickable="true"
     android:elevation="1dp"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp">
 
     <android.support.constraint.ConstraintLayout
@@ -17,16 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        android:paddingRight="@dimen/material_card_content_padding">
+        android:paddingEnd="@dimen/material_card_content_padding">
 
         <View
             android:id="@+id/color_strip"
             android:layout_width="4dp"
             android:layout_height="0dp"
             android:background="@drawable/color_strip"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_date"
@@ -46,8 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/views_spacing"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_date"
-            android:layout_marginStart="@dimen/material_card_content_padding_plus_strip"
+            android:layout_marginStart="@dimen/material_card_content_padding"
             android:layout_marginTop="@dimen/material_card_content_padding"
             android:ellipsize="marquee"
             android:fontFamily="@string/font_family_medium"
@@ -55,6 +51,7 @@
             android:text="Title f kasmkdfm aksmdf kasmflakmsf as kfmasl mlkasm lakm k"
             android:textColor="@color/textDarkTitle"
             android:textSize="@dimen/material_typography_subheading"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_date"
             app:layout_constraintEnd_toStartOf="@id/tv_date"
             app:layout_constraintStart_toStartOf="@id/color_strip"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/material_card_content_padding"
-            android:layout_marginStart="@dimen/material_card_content_padding_plus_strip"
+            android:layout_marginStart="@dimen/material_card_content_padding"
             android:ellipsize="end"
             android:fontFamily="@string/font_family_regular"
             android:maxLines="3"

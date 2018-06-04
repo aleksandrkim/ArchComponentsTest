@@ -3,13 +3,16 @@ package aleksandrkim.ArchComponentsTest.HostActivity;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
-import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.Db.Note;
 import aleksandrkim.ArchComponentsTest.Utils.Colors;
+import aleksandrkim.ArchComponentsTest.Utils.Event;
 
 /**
  * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for ArchComponentsTest
@@ -21,22 +24,24 @@ public class NotesFeedVM extends AndroidViewModel {
 
     private AppDatabase db;
 
-    private LiveData<PagedList<NoteRoom>> pagedNotes;
+    private LiveData<PagedList<Note>> pagedNotes;
+    private MutableLiveData<Event<Pair<Integer, Integer>>> swipedNote;
 
     public NotesFeedVM(Application application) {
         super(application);
         db = AppDatabase.getDb(this.getApplication());
+        swipedNote = new MutableLiveData<>();
     }
 
     public void subscribeToPagedNotes(int pageSize) {
-        pagedNotes = new LivePagedListBuilder<>(db.noteRoomDao().getNotesPagedLastModifiedFirst(), pageSize).build();
+        pagedNotes = new LivePagedListBuilder<>(db.noteRoomDao().getNotesPagedLastCreatedFirst(), pageSize).build();
     }
 
     public void addSampleNotes(final int count) {
         AsyncTask.execute(() -> {
             for (int i = 0; i < count; i++) {
-                NoteRoom noteRoom = new NoteRoom("sample", "content", Colors.colors[i % Colors.colors.length]);
-                db.noteRoomDao().add(noteRoom);
+                Note note = new Note("Sample", "Content content content content content content content content content content content content content content content content content content content content content", Colors.colors[i % Colors.colors.length]);
+                db.noteRoomDao().add(note);
             }
         });
     }
@@ -49,7 +54,15 @@ public class NotesFeedVM extends AndroidViewModel {
         AsyncTask.execute(() -> db.noteRoomDao().deleteAll());
     }
 
-    public LiveData<PagedList<NoteRoom>> getAllPagedNotes() {
+    public LiveData<PagedList<Note>> getAllPagedNotes() {
         return pagedNotes;
+    }
+
+    public void swipe(int noteId, int swipePosition) {
+        swipedNote.setValue(new Event<>(Pair.create(noteId, swipePosition)));
+    }
+
+    public LiveData<Event<Pair<Integer, Integer>>> getSwipedNote() {
+        return swipedNote;
     }
 }

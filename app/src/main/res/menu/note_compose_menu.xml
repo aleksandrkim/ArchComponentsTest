@@ -6,6 +6,6 @@
     <item
         android:id="@+id/menu_color_pick"
         android:icon="@drawable/ic_color_lens_24dp"
-        android:title="@string/pick_color"
+        android:title="@string/choose_color"
         app:showAsAction="ifRoom"/>
 </menu>

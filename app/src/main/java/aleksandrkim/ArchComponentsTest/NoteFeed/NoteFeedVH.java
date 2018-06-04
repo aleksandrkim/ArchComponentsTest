@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.Db.Note;
 import aleksandrkim.ArchComponentsTest.R;
 
 /**
@@ -37,13 +37,13 @@ public class NoteFeedVH extends RecyclerView.ViewHolder {
         return id;
     }
 
-    void bind(NoteRoom note) {
+    void bind(Note note) {
         id = note.getId();
         title.setText(note.getTitle());
         if (title.getText().length() == 0)
             title.setVisibility(View.GONE);
         content.setText(note.getContent());
-        date.setText(note.getLastModifiedString());
+        date.setText(note.getCreatedTimeString());
         colorStrip.getBackground().setTint(note.getColor());
     }
 

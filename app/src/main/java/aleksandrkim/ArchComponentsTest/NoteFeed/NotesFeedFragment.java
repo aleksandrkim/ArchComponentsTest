@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +33,7 @@ public class NotesFeedFragment extends Fragment {
     private LinearLayoutManager adapterLayoutManager;
     private ItemTouchHelper itemTouchHelper;
 
+    private CoordinatorLayout coordinatorLayout;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
 
@@ -56,6 +59,7 @@ public class NotesFeedFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
+        coordinatorLayout = v.findViewById(R.id.coordinator);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
         return v;
@@ -70,26 +74,55 @@ public class NotesFeedFragment extends Fragment {
         setFab();
         setRecycler();
         observePagedList();
+        observeSwipeEvent();
     }
 
     private void prepareRecycler() {
-        // if the list was at the top, scroll upwards to show newly added items
-        OnListUpdatedListener onListUpdatedListener = listSize -> {
-            if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
-                adapterLayoutManager.scrollToPositionWithOffset(0, 0);
-            }
-        };
-        RecyclerItemClickListener itemClickListener = (pos) -> launchNoteComposeFragment(pagedAdapter.getNote(pos).getId());
-        pagedAdapter = new PagedFeedAdapter(itemClickListener, onListUpdatedListener);
+        pagedAdapter = new PagedFeedAdapter(
+                pos -> launchNoteComposeFragment(pagedAdapter.getNote(pos).getId()),
+                listSize -> {
+                    // if the list was at the top, scroll upwards to show newly added items
+                    if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
+                        adapterLayoutManager.scrollToPositionWithOffset(0, 0);
+                    }
+                });
 
         SwipeCallback swipeCallback = new SwipeCallback(
-                (viewHolder, holder) -> noteFeedViewModel.deleteNote(((NoteFeedVH) viewHolder).getId()));
+                (viewHolder, holder) -> {
+                    noteFeedViewModel.swipe(((NoteFeedVH) viewHolder).getId(), viewHolder.getLayoutPosition());
+                });
         itemTouchHelper = new ItemTouchHelper(swipeCallback);
     }
 
     private void observePagedList() {
         noteFeedViewModel.subscribeToPagedNotes(20);
         noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> pagedAdapter.submitList(noteRooms));
+    }
+
+    private void observeSwipeEvent() {
+        noteFeedViewModel.getSwipedNote().observe(this,
+                integerEvent -> {
+                    if (integerEvent.getContentIfAvailable() != null) {
+                        showSnackbar(R.string.note_deleted, Snackbar.LENGTH_SHORT, R.string.undo,
+                                view -> pagedAdapter.notifyItemChanged(integerEvent.peekContent().second),
+                                () -> noteFeedViewModel.deleteNote(integerEvent.peekContent().first));
+                    }
+                }
+        );
+    }
+
+    private void showSnackbar(int displayTextId, int duration, int actionTextId,
+                              View.OnClickListener onActionClicked, Runnable onDismissed) {
+        Snackbar.make(coordinatorLayout, displayTextId, duration)
+                .setAction(actionTextId, onActionClicked)
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
+                            onDismissed.run();
+                        super.onDismissed(transientBottomBar, event);
+                    }
+                }).show();
     }
 
     private void setFab() {
@@ -111,6 +144,7 @@ public class NotesFeedFragment extends Fragment {
     @Override
     public void onDestroyView() {
         noteFeedViewModel.getAllPagedNotes().removeObservers(this);
+        noteFeedViewModel.getSwipedNote().removeObservers(this);
         super.onDestroyView();
     }
 

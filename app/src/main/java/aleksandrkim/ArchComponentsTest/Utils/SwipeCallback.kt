@@ -12,6 +12,8 @@ import kotlin.math.abs
 class SwipeCallback(private val recyclerItemSwipeListener: RecyclerItemSwipeListener) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
+    val TAG = "SwipeCallback"
+
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder):
             Boolean = false
 
@@ -29,7 +31,7 @@ class SwipeCallback(private val recyclerItemSwipeListener: RecyclerItemSwipeList
 
     override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                              dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        if (isCurrentlyActive && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             val alpha = 1.0f - abs(dX) / viewHolder.itemView.width * 2
             viewHolder.itemView.alpha = alpha
         }

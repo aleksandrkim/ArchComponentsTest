@@ -27,6 +27,7 @@ import butterknife.Unbinder;
 public class NoteComposeFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "ComposeFragment";
     private static final String KEY_NOTE_ID = "noteIdParam";
+    private static final String KEY_NOTE_COLOR = "noteColor";
     private int noteId;
     private NavigationActivity navigationActivity;
 
@@ -56,7 +57,7 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
 
         composeViewModel = ViewModelProviders.of(this).get(ComposeVM.class);
         composeViewModel.setCurrentNote(noteId,
-                savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_ID) : null);
+                savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_COLOR) : null);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
 
     private void changeColorTag() {
         AlertDialog.Builder builder = new AlertDialog.Builder((Context) navigationActivity);
-        builder.setTitle(R.string.pick_color)
+        builder.setTitle(R.string.choose_color)
                 .setItems(Colors.colorTitles, (dialog, which) -> composeViewModel.setColor(Colors.colors[which]));
         builder.create().show();
     }
@@ -137,7 +138,7 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "onSaveInstanceState: ");
-        outState.putInt(getString(R.string.saved_color_choice), composeViewModel.getColor().getValue());
+        outState.putInt(KEY_NOTE_COLOR, composeViewModel.getColor().getValue());
         super.onSaveInstanceState(outState);
     }
 

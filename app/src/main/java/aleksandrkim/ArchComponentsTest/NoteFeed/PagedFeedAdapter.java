@@ -8,20 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.Db.Note;
 import aleksandrkim.ArchComponentsTest.R;
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:25 PM for ArchComponentsTest
  */
 
-public class PagedFeedAdapter extends PagedListAdapter<NoteRoom, NoteFeedVH> {
+public class PagedFeedAdapter extends PagedListAdapter<Note, NoteFeedVH> {
 
     private RecyclerItemClickListener recyclerItemClickListener;
     private OnListUpdatedListener onListUpdatedListener;
 
     PagedFeedAdapter(RecyclerItemClickListener recyclerItemClickListener, OnListUpdatedListener onListUpdatedListener) {
-        super(NoteRoom.DIFF_ITEM_CALLBACK);
+        super(Note.DIFF_ITEM_CALLBACK);
         this.recyclerItemClickListener = recyclerItemClickListener;
         this.onListUpdatedListener = onListUpdatedListener;
     }
@@ -36,20 +36,20 @@ public class PagedFeedAdapter extends PagedListAdapter<NoteRoom, NoteFeedVH> {
     }
 
     @Override
-    public void onCurrentListChanged(@Nullable PagedList<NoteRoom> currentList) {
+    public void onCurrentListChanged(@Nullable PagedList<Note> currentList) {
         super.onCurrentListChanged(currentList);
         onListUpdatedListener.onListUpdated(currentList.size());
     }
 
-    public NoteRoom getNote(int position) {
+    public Note getNote(int position) {
         return getItem(position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NoteFeedVH holder, int position) {
-        NoteRoom noteRoom = getItem(position);
-        if (noteRoom != null) {
-            holder.bind(noteRoom);
+        Note note = getItem(position);
+        if (note != null) {
+            holder.bind(note);
         } else {
             holder.clear();
         }

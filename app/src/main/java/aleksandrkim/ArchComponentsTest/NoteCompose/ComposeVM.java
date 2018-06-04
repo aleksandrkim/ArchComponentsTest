@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import java.util.Calendar;
 
 import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
-import aleksandrkim.ArchComponentsTest.Db.NoteRoom;
+import aleksandrkim.ArchComponentsTest.Db.Note;
 
 /**
  * Created by Aleksandr Kim on 27 May, 2018 11:21 PM for ArchComponentsTest
@@ -21,7 +21,7 @@ public class ComposeVM extends AndroidViewModel {
 
     private AppDatabase db;
 
-    private NoteRoom currentNote;
+    private Note currentNote;
     private MutableLiveData<Integer> color;
 
     public ComposeVM(Application application) {
@@ -33,7 +33,7 @@ public class ComposeVM extends AndroidViewModel {
     void setCurrentNote(final int id, @Nullable Integer savedColor) {
         AsyncTask.execute(() -> {
             currentNote = id == -1
-                    ? new NoteRoom("", "", -1)
+                    ? new Note("", "", -1)
                     : db.noteRoomDao().getNoteById(id);
             color.postValue(savedColor == null
                     ? currentNote.getColor()

@@ -1,29 +1,29 @@
 <resources>
-    <string name="app_name">ArchComponentsTest</string>
-    <string name="menu_delete_all">Удалить все</string>
-    <string name="menu_add_20">Add 20 more</string>
+    <string name="menu_delete_all">Delete everything</string>
+    <string name="menu_add_sample_notes">Add sample notes</string>
 
-    <string name="new_note">Новая заметка</string>
-    <string name="note_feed">Все заметки</string>
-    <string name="save">Сохранить</string>
-    <string name="pick_color">Выделить цветом</string>
+    <string name="new_note">New note</string>
+    <string name="note_feed">All notes</string>
 
-    <!--Font families-->
-    <string name="font_family_light">sans-serif-light</string>
-    <string name="font_family_medium">sans-serif-medium</string>
-    <string name="font_family_regular">sans-serif</string>
-    <string name="font_family_condensed">sans-serif-condensed</string>
-    <string name="font_family_black">sans-serif-black</string>
-    <string name="font_family_thin">sans-serif-thin</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="undo">Undo</string>
+    <string name="cannot_save_empty_note">Cannot save an empty note</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="cannot_save_empty_note">Невозмжно сохранить пустую заметку</string>
+    <string name="input_title">Title</string>
+    <string name="input_content">Body</string>
+    <string name="choose_color">Choose color tag</string>
 
-    <string name="input_title">Название заметки</string>
-    <string name="input_content">Текст заметки</string>
 
-    <string name="saved_color_choice">SavedColorChoice</string>
+    <!--region Font families-->
+    <string name="font_family_light" translatable="false">sans-serif-light</string>
+    <string name="font_family_medium" translatable="false">sans-serif-medium</string>
+    <string name="font_family_regular" translatable="false">sans-serif</string>
+    <string name="font_family_condensed" translatable="false">sans-serif-condensed</string>
+    <string name="font_family_black" translatable="false">sans-serif-black</string>
+    <string name="font_family_thin" translatable="false">sans-serif-thin</string>
+    <!--endregion-->
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--region Constants-->
+    <string name="app_name" translatable="false">ArchComponentsTest</string>
+    <!--endregion-->
 </resources>

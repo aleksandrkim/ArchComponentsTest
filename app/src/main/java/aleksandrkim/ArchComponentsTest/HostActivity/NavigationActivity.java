@@ -16,6 +16,9 @@ public interface NavigationActivity {
 
     void launchWholeFragment(@NonNull Fragment fragment, @Nullable String tag);
 
+//    void showSnackbar(int displayTextId, int duration, int actionTextId, View.OnClickListener onActionClicked,
+//                      Runnable runnable);
+
     interface BackEnabled {
         void onBackPressed(); // to handle back button in fragments' methods
     }

@@ -1,23 +1,13 @@
 <resources>
     <dimen name="material_typography_date">12sp</dimen>
+    <dimen name="material_typography_body">14sp</dimen>
+    <dimen name="material_typography_subheading">16sp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="material_card_content_height">88dp</dimen>
     <dimen name="material_card_height">88dp</dimen>
     <dimen name="material_card_margin">8dp</dimen>
     <dimen name="material_card_content_padding">12dp</dimen>
-    <dimen name="material_card_content_padding_plus_strip">16dp</dimen>
     <dimen name="views_spacing">12dp</dimen>
-
-    <dimen name="material_typography_button">15sp</dimen>
-    <dimen name="material_typography_caption">13sp</dimen>
-    <dimen name="material_typography_body">14sp</dimen>
-    <dimen name="material_typography_subheading">16sp</dimen>
-    <dimen name="material_typography_title">20sp</dimen>
-    <dimen name="material_typography_headline">24sp</dimen>
-    <dimen name="material_typography_display1">34sp</dimen>
-    <dimen name="material_typography_display2">45sp</dimen>
-    <dimen name="material_typography_display3">56sp</dimen>
-    <dimen name="material_typography_display4">112sp</dimen>
 
 </resources>
