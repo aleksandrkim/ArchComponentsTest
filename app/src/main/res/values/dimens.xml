@@ -4,6 +4,7 @@
     <dimen name="material_typography_subheading">16sp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="color_strip_width">4dp</dimen>
     <dimen name="material_card_content_height">88dp</dimen>
     <dimen name="material_card_height">88dp</dimen>
     <dimen name="material_card_margin">8dp</dimen>

@@ -148,6 +148,7 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
         recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(pagedAdapter);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(null);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 

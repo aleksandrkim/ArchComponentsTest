@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
 
     @Override
     public void launchWholeFragment(@NonNull Fragment fragment, @Nullable String tag) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_frame, fragment, tag)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -47,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
 
     @Override
     public void onBackPressed() {
-//        if (getSupportFragmentManager().getBackStackEntryCount() < 1)
-//            finish();
-
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
         if (currentFragment instanceof BackEnabled) {
             ((BackEnabled) currentFragment).onBackPressed();
