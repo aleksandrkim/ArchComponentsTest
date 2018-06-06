@@ -2,6 +2,7 @@ package aleksandrkim.ArchComponentsTest.HostActivity;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.LivePagedListBuilder;
@@ -44,6 +45,11 @@ public class NotesFeedVM extends AndroidViewModel {
                 db.noteRoomDao().add(note);
             }
         });
+    }
+
+    public void removeAllObs(LifecycleOwner owner) {
+        getAllPagedNotes().removeObservers(owner);
+        getSwipedNote().removeObservers(owner);
     }
 
     public void deleteNote(final int id) {

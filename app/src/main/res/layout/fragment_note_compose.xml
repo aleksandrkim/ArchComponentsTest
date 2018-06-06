@@ -1,31 +1,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:padding="@dimen/material_card_content_padding"
-              tools:context="aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/material_card_content_padding"
+    tools:context="aleksandrkim.ArchComponentsTest.NoteDetails.NoteDetailsFragment">
 
     <EditText
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
         android:fontFamily="@string/font_family_medium"
         android:hint="@string/input_title"
         android:textColor="@color/textDarkTitle"
-        android:backgroundTint="@android:color/transparent"
-        android:textSize="@dimen/material_typography_subheading"/>
+        android:textSize="@dimen/material_typography_subheading" />
 
     <EditText
         android:id="@+id/et_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/views_spacing"
+        android:backgroundTint="@android:color/transparent"
         android:fontFamily="@string/font_family_medium"
         android:gravity="top"
         android:hint="@string/input_content"
         android:textColor="@color/textDarkTitle"
-        android:backgroundTint="@android:color/transparent"
-        android:textSize="@dimen/material_typography_subheading"/>
+        android:textSize="@dimen/material_typography_subheading" />
 
 </LinearLayout>

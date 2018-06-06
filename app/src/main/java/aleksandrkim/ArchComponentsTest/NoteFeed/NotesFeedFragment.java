@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,11 +22,14 @@ import android.view.ViewGroup;
 
 import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
 import aleksandrkim.ArchComponentsTest.HostActivity.NotesFeedVM;
-import aleksandrkim.ArchComponentsTest.NoteCompose.NoteComposeFragment;
+import aleksandrkim.ArchComponentsTest.NoteDetails.NoteDetailsFragment;
 import aleksandrkim.ArchComponentsTest.R;
 import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-public class NotesFeedFragment extends Fragment {
+public class NotesFeedFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "NotesFeedFragment";
     NavigationActivity navigationActivity;
 
@@ -33,11 +37,13 @@ public class NotesFeedFragment extends Fragment {
     private LinearLayoutManager adapterLayoutManager;
     private ItemTouchHelper itemTouchHelper;
 
-    private CoordinatorLayout coordinatorLayout;
-    private RecyclerView recyclerView;
-    private FloatingActionButton fab;
+    @BindView(R.id.coordinator) CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    private Unbinder unbinder;
 
     private PagedFeedAdapter pagedAdapter;
+    private boolean scrollToTop = false;
 
     public static NotesFeedFragment newInstance() {
         NotesFeedFragment fragment = new NotesFeedFragment();
@@ -49,19 +55,17 @@ public class NotesFeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        noteFeedViewModel = ViewModelProviders.of(this).get(NotesFeedVM.class);
+//        setRetainInstance(true);
+        setHasOptionsMenu(true);
+        initVM();
         prepareRecycler();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setRetainInstance(true);
-        setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
-        coordinatorLayout = v.findViewById(R.id.coordinator);
-        recyclerView = v.findViewById(R.id.recycler_view);
-        fab = v.findViewById(R.id.fab);
+        unbinder = ButterKnife.bind(this, v);
         return v;
     }
 
@@ -81,22 +85,28 @@ public class NotesFeedFragment extends Fragment {
         pagedAdapter = new PagedFeedAdapter(
                 pos -> launchNoteComposeFragment(pagedAdapter.getNote(pos).getId()),
                 listSize -> {
-                    // if the list was at the top, scroll upwards to show newly added items
-                    if (adapterLayoutManager.findFirstVisibleItemPosition() == 0 && listSize > 0) {
+                    if (scrollToTop) {
                         adapterLayoutManager.scrollToPositionWithOffset(0, 0);
+                        scrollToTop = false;
                     }
                 });
 
         SwipeCallback swipeCallback = new SwipeCallback(
-                (viewHolder, holder) -> {
-                    noteFeedViewModel.swipe(((NoteFeedVH) viewHolder).getId(), viewHolder.getLayoutPosition());
-                });
+                (viewHolder, holder) -> noteFeedViewModel.swipe(((NoteFeedVH) viewHolder).getId(), viewHolder.getLayoutPosition()));
+
         itemTouchHelper = new ItemTouchHelper(swipeCallback);
     }
 
     private void observePagedList() {
-        noteFeedViewModel.subscribeToPagedNotes(20);
-        noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> pagedAdapter.submitList(noteRooms));
+        noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> {
+            if (pagedAdapter.getCurrentList() != null && noteRooms != null &&
+                    pagedAdapter.getCurrentList().size() + 1 == noteRooms.size() &&
+                    adapterLayoutManager.findFirstVisibleItemPosition() == 0) {
+                scrollToTop = true;
+            }
+
+            pagedAdapter.submitList(noteRooms);
+        });
     }
 
     private void observeSwipeEvent() {
@@ -118,11 +128,15 @@ public class NotesFeedFragment extends Fragment {
                 .addCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
-                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
-                            onDismissed.run();
+                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) onDismissed.run();
                         super.onDismissed(transientBottomBar, event);
                     }
                 }).show();
+    }
+
+    private void initVM() {
+        noteFeedViewModel = ViewModelProviders.of(this).get(NotesFeedVM.class);
+        noteFeedViewModel.subscribeToPagedNotes(20);
     }
 
     private void setFab() {
@@ -138,14 +152,7 @@ public class NotesFeedFragment extends Fragment {
     }
 
     private void launchNoteComposeFragment(int noteId) {
-        navigationActivity.launchWholeFragment(NoteComposeFragment.newInstance(noteId), NoteComposeFragment.TAG);
-    }
-
-    @Override
-    public void onDestroyView() {
-        noteFeedViewModel.getAllPagedNotes().removeObservers(this);
-        noteFeedViewModel.getSwipedNote().removeObservers(this);
-        super.onDestroyView();
+        navigationActivity.launchWholeFragment(NoteDetailsFragment.newInstance(noteId), NoteDetailsFragment.TAG);
     }
 
     @Override
@@ -167,6 +174,19 @@ public class NotesFeedFragment extends Fragment {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed() called");
+        navigationActivity.finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        noteFeedViewModel.removeAllObs(this);
+        if (unbinder != null) unbinder.unbind();
+        super.onDestroyView();
     }
 
 }

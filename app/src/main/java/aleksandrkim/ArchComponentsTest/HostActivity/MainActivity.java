@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
-            launchWholeFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
+//            launchWholeFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
+            launchInitialFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
         }
     }
 
@@ -32,30 +33,22 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
     public void launchWholeFragment(@NonNull Fragment fragment, @Nullable String tag) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_frame, fragment, tag)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
     }
 
-//    @Override
-//    public void showSnackbar(int displayTextId, int duration, int actionTextId, View.OnClickListener onActionClicked, Runnable
-//            onDismissed) {
-//        Snackbar.make(findViewById(R.id.coordinator), displayTextId, duration)
-//                .setAction(actionTextId, onActionClicked)
-//                .addCallback(new Snackbar.Callback() {
-//                    @Override
-//                    public void onDismissed(Snackbar transientBottomBar, int event) {
-//                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
-//                            onDismissed.run();
-//                        super.onDismissed(transientBottomBar, event);
-//                    }
-//                }).show();
-//    }
+    public void launchInitialFragment(@NonNull Fragment fragment, @Nullable String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_frame, fragment, tag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() < 2)
-            finish();
+//        if (getSupportFragmentManager().getBackStackEntryCount() < 1)
+//            finish();
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
         if (currentFragment instanceof BackEnabled) {

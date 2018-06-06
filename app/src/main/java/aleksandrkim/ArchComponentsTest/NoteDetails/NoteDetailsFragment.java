@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteCompose;
+package aleksandrkim.ArchComponentsTest.NoteDetails;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -24,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class NoteComposeFragment extends Fragment implements NavigationActivity.BackEnabled {
+public class NoteDetailsFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "ComposeFragment";
     private static final String KEY_NOTE_ID = "noteIdParam";
     private static final String KEY_NOTE_COLOR = "noteColor";
@@ -35,12 +35,12 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
     @BindView(R.id.et_title) EditText etTitle;
     @BindView(R.id.et_content) EditText etContent;
 
-    private ComposeVM composeViewModel;
+    private NoteDetailsVM composeViewModel;
 
-    public NoteComposeFragment() {}
+    public NoteDetailsFragment() {}
 
-    public static NoteComposeFragment newInstance(@Nullable int noteId) {
-        NoteComposeFragment fragment = new NoteComposeFragment();
+    public static NoteDetailsFragment newInstance(@Nullable int noteId) {
+        NoteDetailsFragment fragment = new NoteDetailsFragment();
 
         Bundle args = new Bundle();
         args.putInt(KEY_NOTE_ID, noteId);
@@ -52,20 +52,18 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+
         if (getArguments() != null)
             this.noteId = getArguments().getInt(KEY_NOTE_ID, -1);
 
-        composeViewModel = ViewModelProviders.of(this).get(ComposeVM.class);
-        composeViewModel.setCurrentNote(noteId,
-                savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_COLOR) : null);
+        initVM(savedInstanceState);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setRetainInstance(true);
-        setHasOptionsMenu(true);
-
         View v = inflater.inflate(R.layout.fragment_note_compose, container, false);
         unbinder = ButterKnife.bind(this, v);
 
@@ -82,13 +80,8 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
         navigationActivity.setUpButton(true);
     }
 
-    private void setEt() {
-        etTitle.setText(composeViewModel.getTitle());
-        etContent.setText(composeViewModel.getContent());
-    }
-
     private void saveNote() {
-        updateVM();
+        updateCurrentNote();
         if (!composeViewModel.hasEitherField()) {
             Toast.makeText(getActivity(), getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show();
             return;
@@ -96,16 +89,26 @@ public class NoteComposeFragment extends Fragment implements NavigationActivity.
         composeViewModel.addOrUpdateCurrentNote();
     }
 
-    private void updateVM() {
-        composeViewModel.setTitle(etTitle.getText().toString());
-        composeViewModel.setContent(etContent.getText().toString());
-    }
-
     private void changeColorTag() {
         AlertDialog.Builder builder = new AlertDialog.Builder((Context) navigationActivity);
         builder.setTitle(R.string.choose_color)
                 .setItems(Colors.colorTitles, (dialog, which) -> composeViewModel.setColor(Colors.colors[which]));
         builder.create().show();
+    }
+
+    private void initVM(Bundle savedInstanceState){
+        composeViewModel = ViewModelProviders.of(this).get(NoteDetailsVM.class);
+        composeViewModel.setCurrentNote(noteId, savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_COLOR) : null);
+    }
+
+    private void setEt() {
+        etTitle.setText(composeViewModel.getTitle());
+        etContent.setText(composeViewModel.getContent());
+    }
+
+    private void updateCurrentNote() {
+        composeViewModel.setTitle(etTitle.getText().toString());
+        composeViewModel.setContent(etContent.getText().toString());
     }
 
     @Override

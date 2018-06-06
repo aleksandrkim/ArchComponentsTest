@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteCompose;
+package aleksandrkim.ArchComponentsTest.NoteDetails;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -15,16 +15,16 @@ import aleksandrkim.ArchComponentsTest.Db.Note;
  * Created by Aleksandr Kim on 27 May, 2018 11:21 PM for ArchComponentsTest
  */
 
-public class ComposeVM extends AndroidViewModel {
+public class NoteDetailsVM extends AndroidViewModel {
 
-    private static final String TAG = "ComposeVM";
+    private static final String TAG = "NoteDetailsVM";
 
     private AppDatabase db;
 
     private Note currentNote;
     private MutableLiveData<Integer> color;
 
-    public ComposeVM(Application application) {
+    public NoteDetailsVM(Application application) {
         super(application);
         db = AppDatabase.getDb(this.getApplication());
         color = new MutableLiveData<>();
@@ -46,7 +46,7 @@ public class ComposeVM extends AndroidViewModel {
     }
 
     public void addOrUpdateCurrentNote() {
-        currentNote.setTitleIfEmpty();
+//        currentNote.setTitleIfEmpty();
         currentNote.setColor(color.getValue());
         currentNote.setLastModified(Calendar.getInstance().getTime().getTime());
         AsyncTask.execute(() -> db.noteRoomDao().upsert(currentNote));
