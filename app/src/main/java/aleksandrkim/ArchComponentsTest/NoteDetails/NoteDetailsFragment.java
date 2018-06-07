@@ -20,9 +20,6 @@ import android.widget.Toast;
 import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
 import aleksandrkim.ArchComponentsTest.R;
 import aleksandrkim.ArchComponentsTest.Utils.Colors;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class NoteDetailsFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "ComposeFragment";
@@ -31,11 +28,10 @@ public class NoteDetailsFragment extends Fragment implements NavigationActivity.
     private int noteId;
     private NavigationActivity navigationActivity;
 
-    private Unbinder unbinder;
-    @BindView(R.id.et_title) EditText etTitle;
-    @BindView(R.id.et_content) EditText etContent;
+    EditText etTitle;
+    EditText etContent;
 
-    private NoteDetailsVM composeViewModel;
+    private NoteDetailsVM noteDetailsViewModel;
 
     public NoteDetailsFragment() {}
 
@@ -65,7 +61,8 @@ public class NoteDetailsFragment extends Fragment implements NavigationActivity.
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note_compose, container, false);
-        unbinder = ButterKnife.bind(this, v);
+        etTitle = v.findViewById(R.id.et_title);
+        etContent = v.findViewById(R.id.et_content);
 
         if (savedInstanceState == null) setEt();
 
@@ -82,40 +79,40 @@ public class NoteDetailsFragment extends Fragment implements NavigationActivity.
 
     private void saveNote() {
         updateCurrentNote();
-        if (!composeViewModel.hasEitherField()) {
+        if (!noteDetailsViewModel.hasEitherField()) {
             Toast.makeText(getActivity(), getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show();
             return;
         }
-        composeViewModel.addOrUpdateCurrentNote();
+        noteDetailsViewModel.addOrUpdateCurrentNote();
     }
 
     private void changeColorTag() {
         AlertDialog.Builder builder = new AlertDialog.Builder((Context) navigationActivity);
         builder.setTitle(R.string.choose_color)
-                .setItems(Colors.colorTitles, (dialog, which) -> composeViewModel.setColor(Colors.colors[which]));
+                .setItems(Colors.colorTitles, (dialog, which) -> noteDetailsViewModel.setColor(Colors.colors[which]));
         builder.create().show();
     }
 
     private void initVM(Bundle savedInstanceState){
-        composeViewModel = ViewModelProviders.of(this).get(NoteDetailsVM.class);
-        composeViewModel.setCurrentNote(noteId, savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_COLOR) : null);
+        noteDetailsViewModel = ViewModelProviders.of(this).get(NoteDetailsVM.class);
+        noteDetailsViewModel.setCurrentNote(noteId, savedInstanceState != null ? savedInstanceState.getInt(KEY_NOTE_COLOR) : null);
     }
 
     private void setEt() {
-        etTitle.setText(composeViewModel.getTitle());
-        etContent.setText(composeViewModel.getContent());
+        etTitle.setText(noteDetailsViewModel.getTitle());
+        etContent.setText(noteDetailsViewModel.getContent());
     }
 
     private void updateCurrentNote() {
-        composeViewModel.setTitle(etTitle.getText().toString());
-        composeViewModel.setContent(etContent.getText().toString());
+        noteDetailsViewModel.setTitle(etTitle.getText().toString());
+        noteDetailsViewModel.setContent(etContent.getText().toString());
     }
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.note_compose_menu, menu);
-        composeViewModel.getColor().observe(this, integer -> menu.getItem(0).getIcon().setTint(integer));
+        noteDetailsViewModel.getColor().observe(this, integer -> menu.getItem(0).getIcon().setTint(integer));
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -123,7 +120,6 @@ public class NoteDetailsFragment extends Fragment implements NavigationActivity.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Log.d(TAG, "onOptionsItemSelected: homeAsUp");
                 saveNote();
                 return false;
             case R.id.menu_color_pick:
@@ -141,13 +137,13 @@ public class NoteDetailsFragment extends Fragment implements NavigationActivity.
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "onSaveInstanceState: ");
-        outState.putInt(KEY_NOTE_COLOR, composeViewModel.getColor().getValue());
+        outState.putInt(KEY_NOTE_COLOR, noteDetailsViewModel.getColor().getValue());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onDestroyView() {
-        if (unbinder != null) unbinder.unbind();
+        noteDetailsViewModel.removeAllObs(this);
         super.onDestroyView();
     }
 }

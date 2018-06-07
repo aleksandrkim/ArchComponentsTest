@@ -21,13 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
-import aleksandrkim.ArchComponentsTest.HostActivity.NotesFeedVM;
 import aleksandrkim.ArchComponentsTest.NoteDetails.NoteDetailsFragment;
 import aleksandrkim.ArchComponentsTest.R;
 import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class NotesFeedFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "NotesFeedFragment";
@@ -37,10 +33,9 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     private LinearLayoutManager adapterLayoutManager;
     private ItemTouchHelper itemTouchHelper;
 
-    @BindView(R.id.coordinator) CoordinatorLayout coordinatorLayout;
-    @BindView(R.id.recycler_view) RecyclerView recyclerView;
-    @BindView(R.id.fab) FloatingActionButton fab;
-    private Unbinder unbinder;
+    private CoordinatorLayout coordinatorLayout;
+    private RecyclerView recyclerView;
+    private FloatingActionButton fab;
 
     private PagedFeedAdapter pagedAdapter;
     private boolean scrollToTop = false;
@@ -65,7 +60,9 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
-        unbinder = ButterKnife.bind(this, v);
+        coordinatorLayout = v.findViewById(R.id.coordinator);
+        recyclerView = v.findViewById(R.id.recycler_view);
+        fab = v.findViewById(R.id.fab);
         return v;
     }
 
@@ -100,7 +97,7 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     private void observePagedList() {
         noteFeedViewModel.getAllPagedNotes().observe(this, noteRooms -> {
             if (pagedAdapter.getCurrentList() != null && noteRooms != null &&
-                    pagedAdapter.getCurrentList().size() + 1 == noteRooms.size() &&
+                    pagedAdapter.getCurrentList().size() < noteRooms.size() &&
                     adapterLayoutManager.findFirstVisibleItemPosition() == 0) {
                 scrollToTop = true;
             }
@@ -148,7 +145,6 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
         recyclerView.setLayoutManager(adapterLayoutManager);
         recyclerView.setAdapter(pagedAdapter);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(null);
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
@@ -186,7 +182,6 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     @Override
     public void onDestroyView() {
         noteFeedViewModel.removeAllObs(this);
-        if (unbinder != null) unbinder.unbind();
         super.onDestroyView();
     }
 

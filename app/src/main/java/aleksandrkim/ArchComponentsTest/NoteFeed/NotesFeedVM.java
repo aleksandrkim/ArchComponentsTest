@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.HostActivity;
+package aleksandrkim.ArchComponentsTest.NoteFeed;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -12,6 +12,7 @@ import android.util.Pair;
 
 import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
 import aleksandrkim.ArchComponentsTest.Db.Note;
+import aleksandrkim.ArchComponentsTest.R;
 import aleksandrkim.ArchComponentsTest.Utils.Colors;
 import aleksandrkim.ArchComponentsTest.Utils.Event;
 
@@ -30,7 +31,7 @@ public class NotesFeedVM extends AndroidViewModel {
 
     public NotesFeedVM(Application application) {
         super(application);
-        db = AppDatabase.getDb(this.getApplication());
+        db = AppDatabase.Companion.getDb(this.getApplication());
         swipedNote = new MutableLiveData<>();
     }
 
@@ -41,15 +42,17 @@ public class NotesFeedVM extends AndroidViewModel {
     public void addSampleNotes(final int count) {
         AsyncTask.execute(() -> {
             for (int i = 0; i < count; i++) {
-                Note note = new Note("Sample", "Content content content content content content content content content content content content content content content content content content content content content", Colors.colors[i % Colors.colors.length]);
+                Note note = new Note("Sample", getApplication().getString(R.string.lorem_ipsum), Colors.colors[i % Colors.colors.length]);
+                if (i == count - 1) note.setTitle("");
+                else if (i == count - 2) note.setContent("");
                 db.noteRoomDao().add(note);
             }
         });
     }
 
     public void removeAllObs(LifecycleOwner owner) {
-        getAllPagedNotes().removeObservers(owner);
-        getSwipedNote().removeObservers(owner);
+        pagedNotes.removeObservers(owner);
+        swipedNote.removeObservers(owner);
     }
 
     public void deleteNote(final int id) {

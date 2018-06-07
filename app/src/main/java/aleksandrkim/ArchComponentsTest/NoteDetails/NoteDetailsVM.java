@@ -2,6 +2,7 @@ package aleksandrkim.ArchComponentsTest.NoteDetails;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
@@ -26,7 +27,7 @@ public class NoteDetailsVM extends AndroidViewModel {
 
     public NoteDetailsVM(Application application) {
         super(application);
-        db = AppDatabase.getDb(this.getApplication());
+        db = AppDatabase.Companion.getDb(this.getApplication());
         color = new MutableLiveData<>();
     }
 
@@ -46,10 +47,13 @@ public class NoteDetailsVM extends AndroidViewModel {
     }
 
     public void addOrUpdateCurrentNote() {
-//        currentNote.setTitleIfEmpty();
         currentNote.setColor(color.getValue());
         currentNote.setLastModified(Calendar.getInstance().getTime().getTime());
-        AsyncTask.execute(() -> db.noteRoomDao().upsert(currentNote));
+        AsyncTask.execute(() -> db.noteRoomDao().addOrUpdate(currentNote));
+    }
+
+    public void removeAllObs(LifecycleOwner owner) {
+        color.removeObservers(owner);
     }
 
     public String getTitle() {

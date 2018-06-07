@@ -21,7 +21,7 @@ public class PagedFeedAdapter extends PagedListAdapter<Note, NoteFeedVH> {
     private OnListUpdatedListener onListUpdatedListener;
 
     PagedFeedAdapter(RecyclerItemClickListener recyclerItemClickListener, OnListUpdatedListener onListUpdatedListener) {
-        super(Note.DIFF_ITEM_CALLBACK);
+        super(Note.Companion.getDIFF_ITEM_CALLBACK());
         this.recyclerItemClickListener = recyclerItemClickListener;
         this.onListUpdatedListener = onListUpdatedListener;
     }
