@@ -15,7 +15,7 @@ abstract class NoteDao : BaseDao<Note>() {
     abstract fun getNotesPagedLastCreatedFirst(): DataSource.Factory<Int, Note>
 
     @Query("SELECT * FROM Note WHERE id = :id")
-    abstract fun getNoteById(id: Int): Note
+    abstract fun getNoteById(id: Int) : Note
 
     @Query("DELETE FROM Note")
     abstract fun deleteAll()

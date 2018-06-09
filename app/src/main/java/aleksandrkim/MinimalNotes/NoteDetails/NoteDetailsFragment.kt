@@ -18,7 +18,7 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
     private var noteId = -1
     private lateinit var navigationActivity: NavigationActivity
 
-    private lateinit var noteDetailsViewModel: NoteDetailsVM
+    private val noteDetailsViewModel: NoteDetailsVM by lazy { ViewModelProviders.of(this).get(NoteDetailsVM::class.java) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
 
         this.noteId = arguments?.getInt(KEY_NOTE_ID, -1) ?: -1
 
-        initVM(savedInstanceState)
+        noteDetailsViewModel.setCurrentNote(noteId, savedInstanceState?.getInt(KEY_NOTE_COLOR))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -38,33 +38,32 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (savedInstanceState == null) setEt()
+        if (savedInstanceState == null) observeAvailableNote()
 
         navigationActivity = requireActivity() as NavigationActivity
         navigationActivity.setTitle(R.string.new_note)
         navigationActivity.setUpButton(true)
     }
 
-    private fun initVM(savedInstanceState: Bundle?) {
-        noteDetailsViewModel = ViewModelProviders.of(this).get(NoteDetailsVM::class.java)
-        noteDetailsViewModel.setCurrentNote(noteId, savedInstanceState?.getInt(KEY_NOTE_COLOR))
-    }
-
-    private fun setEt() {
-        title.setText(noteDetailsViewModel.currentNote.title)
-        body.setText(noteDetailsViewModel.currentNote.body)
+    private fun observeAvailableNote() {
+        noteDetailsViewModel.currentNote.observe(this, Observer {
+            title.setText(it?.title)
+            body.setText(it?.body)
+            noteDetailsViewModel.color.value = it?.color
+        })
     }
 
     private fun changeColorTag() {
-        val builder = AlertDialog.Builder((navigationActivity as Context?)!!)
+        val builder = AlertDialog.Builder(navigationActivity as Context)
         builder.setTitle(R.string.choose_color)
-            .setItems(Colors.colorTitles) { _, which -> noteDetailsViewModel.setColor(Colors.colors[which]) }
+            .setItems(Colors.colorTitles) { _, which -> noteDetailsViewModel.color.value = Colors.colors[which] }
         builder.create().show()
+        noteDetailsViewModel.currentNote.value!!.title = "Trigger"
     }
 
     private fun saveNote() {
         updateCurrentNote()
-        if (!noteDetailsViewModel.currentNote.isBlank()) {
+        if (!noteDetailsViewModel.currentNote.value!!.isBlank()) {
             noteDetailsViewModel.addOrUpdateCurrentNote()
         } else {
             Toast.makeText(activity, getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show()
@@ -72,15 +71,17 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
     }
 
     private fun updateCurrentNote() {
-        noteDetailsViewModel.currentNote.title = title.text.toString()
-        noteDetailsViewModel.currentNote.body = body.text.toString()
+        noteDetailsViewModel.currentNote.value?.title = title.text.toString()
+        noteDetailsViewModel.currentNote.value?.body = body.text.toString()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.note_compose_menu, menu)
-        noteDetailsViewModel.color.observe(this, Observer { menu.getItem(0).icon.setTint(it!!) })
+        noteDetailsViewModel.color.observe(this, Observer {
+            Log.d(TAG, "color observed")
+            menu.getItem(0).icon.setTint(it ?: -1)
+        })
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -90,7 +91,6 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
                 saveNote()
                 return false
             }
-
             R.id.menu_color_pick -> {
                 changeColorTag()
                 return true
@@ -105,7 +105,7 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
 
     override fun onSaveInstanceState(outState: Bundle) {
         Log.d(TAG, "onSaveInstanceState: ")
-        outState.putInt(KEY_NOTE_COLOR, noteDetailsViewModel.color.value!!)
+        outState.putInt(KEY_NOTE_COLOR, noteDetailsViewModel.currentNote.value!!.color)
         super.onSaveInstanceState(outState)
     }
 

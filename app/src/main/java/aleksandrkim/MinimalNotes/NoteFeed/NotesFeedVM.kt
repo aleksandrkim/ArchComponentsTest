@@ -32,22 +32,6 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
         allPagedNotes = LivePagedListBuilder(db.noteRoomDao().getNotesPagedLastCreatedFirst(), pageSize).build()
     }
 
-    fun addSampleNotes(count: Int) {
-        AsyncTask.execute {
-            for (i in 0 until count) {
-                val note = Note("Sample", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\n" +
-                        "        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris\n" +
-                        "        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                                Colors.colors[i % Colors.colors.size])
-                when(i) {
-                    count - 1 -> note.title = ""
-                    count - 2 -> note.body = ""
-                }
-                db.noteRoomDao().add(note)
-            }
-        }
-    }
-
     fun removeAllObs(owner: LifecycleOwner) {
         allPagedNotes!!.removeObservers(owner)
         swipedNote.removeObservers(owner)
@@ -65,7 +49,27 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
         swipedNote.value = Event(Pair.create(noteId, swipePosition))
     }
 
+    fun addSampleNotes(count: Int) {
+        AsyncTask.execute {
+            for (i in 0 until count) {
+                val note = Note("Sample", LOREM_IPSUM, Colors.colors[i % Colors.colors.size])
+                when (i) {
+                    count - 1 -> note.title = ""
+                    count - 2 -> note.body = ""
+                }
+                db.noteRoomDao().add(note)
+            }
+        }
+    }
+
     companion object {
         val TAG = "NotesFeedVM"
+        val LOREM_IPSUM =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore " +
+                    "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea " +
+                    "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat " +
+                    "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
+                    "anim id est laborum."
+
     }
 }

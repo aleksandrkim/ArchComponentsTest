@@ -71,6 +71,11 @@ class NotesFeedFragment : Fragment(), NavigationActivity.BackEnabled {
 
     private fun observePagedList() {
         noteFeedViewModel!!.allPagedNotes!!.observe(this, Observer { noteRooms ->
+            noteRooms?.let {
+                for (note in it)
+                    Log.d(TAG, " " + note.toString())
+            }
+
             if (pagedAdapter!!.currentList != null && noteRooms != null &&
                 pagedAdapter!!.currentList!!.size < noteRooms!!.size &&
                 adapterLayoutManager!!.findFirstVisibleItemPosition() == 0
