@@ -11,9 +11,6 @@ import android.arch.persistence.room.Query
 @Dao
 abstract class NoteDao : BaseDao<Note>() {
 
-    @Query("SELECT * FROM Note ORDER BY lastModified DESC")
-    abstract fun getNotesPagedLastModifiedFirst(): DataSource.Factory<Int, Note>
-
     @Query("SELECT * FROM Note ORDER BY createdTime DESC")
     abstract fun getNotesPagedLastCreatedFirst(): DataSource.Factory<Int, Note>
 

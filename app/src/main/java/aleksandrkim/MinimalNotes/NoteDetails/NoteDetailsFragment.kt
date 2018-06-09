@@ -15,7 +15,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_note_details.*
 
 class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
-    private var noteId = 0
+    private var noteId = -1
     private lateinit var navigationActivity: NavigationActivity
 
     private lateinit var noteDetailsViewModel: NoteDetailsVM
@@ -26,41 +26,23 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
         retainInstance = true
         setHasOptionsMenu(true)
 
-        this.noteId = arguments?.getInt(KEY_NOTE_ID, -1) ?: 0
+        this.noteId = arguments?.getInt(KEY_NOTE_ID, -1) ?: -1
 
         initVM(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_note_details, container, false)
-
-        savedInstanceState?.let { setEt() }
-
-        return v
+        return inflater.inflate(R.layout.fragment_note_details, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        if (savedInstanceState == null) setEt()
+
         navigationActivity = requireActivity() as NavigationActivity
         navigationActivity.setTitle(R.string.new_note)
         navigationActivity.setUpButton(true)
-    }
-
-    private fun saveNote() {
-        updateCurrentNote()
-        if (!noteDetailsViewModel.currentNote.isBlank()) {
-            noteDetailsViewModel.addOrUpdateCurrentNote()
-        } else {
-            Toast.makeText(activity, getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun changeColorTag() {
-        val builder = AlertDialog.Builder((navigationActivity as Context?)!!)
-        builder.setTitle(R.string.choose_color)
-            .setItems(Colors.colorTitles) { _, which -> noteDetailsViewModel.setColor(Colors.colors[which]) }
-        builder.create().show()
     }
 
     private fun initVM(savedInstanceState: Bundle?) {
@@ -71,6 +53,22 @@ class NoteDetailsFragment : Fragment(), NavigationActivity.BackEnabled {
     private fun setEt() {
         title.setText(noteDetailsViewModel.currentNote.title)
         body.setText(noteDetailsViewModel.currentNote.body)
+    }
+
+    private fun changeColorTag() {
+        val builder = AlertDialog.Builder((navigationActivity as Context?)!!)
+        builder.setTitle(R.string.choose_color)
+            .setItems(Colors.colorTitles) { _, which -> noteDetailsViewModel.setColor(Colors.colors[which]) }
+        builder.create().show()
+    }
+
+    private fun saveNote() {
+        updateCurrentNote()
+        if (!noteDetailsViewModel.currentNote.isBlank()) {
+            noteDetailsViewModel.addOrUpdateCurrentNote()
+        } else {
+            Toast.makeText(activity, getString(R.string.cannot_save_empty_note), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun updateCurrentNote() {

@@ -5,26 +5,34 @@ import aleksandrkim.MinimalNotes.R
 import android.arch.paging.PagedList
 import android.arch.paging.PagedListAdapter
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:25 PM for ArchComponentsTest
  */
 
+fun ViewGroup.inflate(layoutRes: Int, attachToRoot: Boolean = false): View {
+    return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
+}
+
+typealias RecyclerItemClickListener = (position: Int) -> Unit
+typealias OnListUpdatedListener = (newSize: Int) -> Unit
+
 class PagedFeedAdapter(private val recyclerItemClickListener: RecyclerItemClickListener,
                        private val onListUpdatedListener: OnListUpdatedListener) :
     PagedListAdapter<Note, NoteFeedVH>(Note.DIFF_ITEM_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteFeedVH {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.note_feed_row, parent, false)
+        val v = parent.inflate(R.layout.note_feed_row)
         val noteFeedVH = NoteFeedVH(v)
-        v.setOnClickListener { recyclerItemClickListener.onItemClick(noteFeedVH.adapterPosition) }
+        v.setOnClickListener { recyclerItemClickListener(noteFeedVH.adapterPosition) }
         return noteFeedVH
     }
 
     override fun onCurrentListChanged(currentList: PagedList<Note>?) {
         super.onCurrentListChanged(currentList)
-        onListUpdatedListener.onListUpdated(currentList?.run { size } ?: 0)
+        onListUpdatedListener(currentList?.size ?: 0)
     }
 
     fun getNote(position: Int): Note? {
