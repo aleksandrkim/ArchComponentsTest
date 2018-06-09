@@ -59,7 +59,7 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_feed, container, false);
+        View v = inflater.inflate(R.layout.fragment_notes_feed, container, false);
         coordinatorLayout = v.findViewById(R.id.coordinator);
         recyclerView = v.findViewById(R.id.recycler_view);
         fab = v.findViewById(R.id.fab);
@@ -149,7 +149,7 @@ public class NotesFeedFragment extends Fragment implements NavigationActivity.Ba
     }
 
     private void launchNoteComposeFragment(int noteId) {
-        navigationActivity.launchWholeFragment(NoteDetailsFragment.newInstance(noteId), NoteDetailsFragment.TAG);
+        navigationActivity.launchWholeFragment(NoteDetailsFragment.Companion.newInstance(noteId), NoteDetailsFragment.TAG);
     }
 
     @Override

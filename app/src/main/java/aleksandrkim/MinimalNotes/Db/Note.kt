@@ -14,25 +14,24 @@ import java.util.*
 
 @Entity(indices = [
     Index("id"),
-    Index(value = ["title", "content"], name = "search_text")])
-data class Note(var title: String = "", var content: String = "", var color: Int = -1) {
+    Index(value = ["title", "body"], name = "search_text")])
+data class Note(var title: String = "", var body: String = "", var color: Int = -1) {
 
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-    var lastModified: Long = Calendar.getInstance().timeInMillis
     var createdTime: Long = Calendar.getInstance().timeInMillis
 
     @Ignore
     private val simpleDateFormat = SimpleDateFormat("dd MMM", Locale("Ru"))
 
-    val lastModifiedString: String
-        get() = simpleDateFormat.format(lastModified)
 
     val createdTimeString: String
         get() = simpleDateFormat.format(createdTime)
 
-    private fun equals(obj: Note): Boolean = (this.id == obj.id && this.title == obj.title && this.content == obj.content
-            && this.color == obj.color && this.lastModified == obj.lastModified)
+    private fun equals(obj: Note): Boolean =
+        this.id == obj.id && this.title == obj.title && this.body == obj.body && this.color == obj.color
+
+    fun isBlank() = title.isBlank() && body.isBlank()
 
     companion object {
 

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
@@ -33,7 +34,7 @@ android {
 
 ext {
     supportLibraryVersion = '27.1.1'
-    butterknifeVersion = '8.8.1'
+//    butterknifeVersion = '8.8.1'
     rxJavaVersion = '2.1.13'
     rxAndroidVersion = '2.0.2'
     roomVersion = '1.1.0'
@@ -54,11 +55,6 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
-    //endregion
-
-    //region ButterKnife
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     //endregion
 
     implementation "com.android.support.constraint:constraint-layout:1.1.0"

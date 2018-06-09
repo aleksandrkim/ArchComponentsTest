@@ -7,7 +7,7 @@
     tools:context="aleksandrkim.MinimalNotes.NoteDetails.NoteDetailsFragment">
 
     <EditText
-        android:id="@+id/et_title"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
@@ -17,7 +17,7 @@
         android:textSize="@dimen/material_typography_subheading" />
 
     <EditText
-        android:id="@+id/et_content"
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/views_spacing"

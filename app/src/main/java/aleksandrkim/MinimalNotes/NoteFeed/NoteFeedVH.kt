@@ -21,8 +21,8 @@ fun View.visible() {
 class NoteFeedVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var id: Int = 0
         private set
-    private val title: TextView = itemView.findViewById(R.id.et_title)
-    private val content: TextView = itemView.findViewById(R.id.et_content)
+    private val title: TextView = itemView.findViewById(R.id.title)
+    private val content: TextView = itemView.findViewById(R.id.body)
     private val date: TextView = itemView.findViewById(R.id.tv_date)
     private val colorStrip: View = itemView.findViewById(R.id.color_strip)
 
@@ -31,10 +31,10 @@ class NoteFeedVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         if (note.title.isEmpty()) title.gone()
         else title.text = note.title
 
-        if (note.content.isEmpty()) content.gone()
-        else content.text = note.content
+        if (note.body.isEmpty()) content.gone()
+        else content.text = note.body
 
-        content.text = note.content
+        content.text = note.body
         date.text = note.createdTimeString
         colorStrip.background.setTint(note.color)
     }

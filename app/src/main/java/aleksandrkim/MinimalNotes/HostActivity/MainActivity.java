@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements NavigationActivit
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
-//            launchWholeFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
             launchInitialFragment(NotesFeedFragment.newInstance(), NotesFeedFragment.TAG);
         }
     }

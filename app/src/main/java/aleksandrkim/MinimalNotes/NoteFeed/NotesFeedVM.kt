@@ -20,8 +20,6 @@ import android.util.Pair
 
 class NotesFeedVM(application: Application) : AndroidViewModel(application) {
 
-    private val TAG = "NotesFeedVM"
-
     private val db: AppDatabase = AppDatabase.getDb(this.getApplication())
 
     var allPagedNotes: LiveData<PagedList<Note>>? = null
@@ -43,7 +41,7 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
                                 Colors.colors[i % Colors.colors.size])
                 when(i) {
                     count - 1 -> note.title = ""
-                    count - 2 -> note.content = ""
+                    count - 2 -> note.body = ""
                 }
                 db.noteRoomDao().add(note)
             }
@@ -65,5 +63,9 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
 
     fun swipe(noteId: Int, swipePosition: Int) {
         swipedNote.value = Event(Pair.create(noteId, swipePosition))
+    }
+
+    companion object {
+        val TAG = "NotesFeedVM"
     }
 }
