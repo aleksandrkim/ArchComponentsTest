@@ -17,6 +17,7 @@ import aleksandrkim.MinimalNotes.R;
 
 public class PagedFeedAdapter extends PagedListAdapter<Note, NoteFeedVH> {
 
+    public static final String TAG = "PagedFeedAdapter";
     private RecyclerItemClickListener recyclerItemClickListener;
     private OnListUpdatedListener onListUpdatedListener;
 
