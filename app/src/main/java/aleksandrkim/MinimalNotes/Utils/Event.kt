@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Utils
+package aleksandrkim.MinimalNotes.Utils
 
 /**
  * Created by Aleksandr Kim on 04 Jun, 2018 10:40 PM for ArchComponentsTest

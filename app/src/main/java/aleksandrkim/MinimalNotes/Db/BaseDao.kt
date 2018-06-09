@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Db
+package aleksandrkim.MinimalNotes.Db
 
 import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.IGNORE

@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Db
+package aleksandrkim.MinimalNotes.Db
 
 import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
@@ -25,6 +25,5 @@ abstract class NoteDao : BaseDao<Note>() {
 
     @Query("DELETE FROM Note WHERE id = :id")
     abstract fun delete(id: Int)
-
 
 }

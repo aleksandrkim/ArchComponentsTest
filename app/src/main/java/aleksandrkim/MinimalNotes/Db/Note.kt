@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Db
+package aleksandrkim.MinimalNotes.Db
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore

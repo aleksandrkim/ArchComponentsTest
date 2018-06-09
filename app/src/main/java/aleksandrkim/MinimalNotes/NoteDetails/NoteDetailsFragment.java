@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteDetails;
+package aleksandrkim.MinimalNotes.NoteDetails;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -17,9 +17,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
-import aleksandrkim.ArchComponentsTest.R;
-import aleksandrkim.ArchComponentsTest.Utils.Colors;
+import aleksandrkim.MinimalNotes.HostActivity.NavigationActivity;
+import aleksandrkim.MinimalNotes.R;
+import aleksandrkim.MinimalNotes.Utils.Colors;
 
 public class NoteDetailsFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "ComposeFragment";

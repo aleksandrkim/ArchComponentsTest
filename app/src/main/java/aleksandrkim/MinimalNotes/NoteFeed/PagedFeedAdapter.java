@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteFeed;
+package aleksandrkim.MinimalNotes.NoteFeed;
 
 import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import aleksandrkim.ArchComponentsTest.Db.Note;
-import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.MinimalNotes.Db.Note;
+import aleksandrkim.MinimalNotes.R;
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:25 PM for ArchComponentsTest

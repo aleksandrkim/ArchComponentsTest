@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteFeed;
+package aleksandrkim.MinimalNotes.NoteFeed;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import aleksandrkim.ArchComponentsTest.Db.Note;
-import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.MinimalNotes.Db.Note;
+import aleksandrkim.MinimalNotes.R;
 
 /**
  * Created by Aleksandr Kim on 20 Apr, 2018 4:37 PM for ArchComponentsTest

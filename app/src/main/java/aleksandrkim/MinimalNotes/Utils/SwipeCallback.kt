@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.Utils
+package aleksandrkim.MinimalNotes.Utils
 
 import android.graphics.Canvas
 import android.support.v7.widget.RecyclerView

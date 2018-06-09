@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteFeed;
+package aleksandrkim.MinimalNotes.NoteFeed;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -20,10 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import aleksandrkim.ArchComponentsTest.HostActivity.NavigationActivity;
-import aleksandrkim.ArchComponentsTest.NoteDetails.NoteDetailsFragment;
-import aleksandrkim.ArchComponentsTest.R;
-import aleksandrkim.ArchComponentsTest.Utils.SwipeCallback;
+import aleksandrkim.MinimalNotes.HostActivity.NavigationActivity;
+import aleksandrkim.MinimalNotes.NoteDetails.NoteDetailsFragment;
+import aleksandrkim.MinimalNotes.R;
+import aleksandrkim.MinimalNotes.Utils.SwipeCallback;
 
 public class NotesFeedFragment extends Fragment implements NavigationActivity.BackEnabled {
     public static final String TAG = "NotesFeedFragment";

@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteDetails;
+package aleksandrkim.MinimalNotes.NoteDetails;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 
 import java.util.Calendar;
 
-import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
-import aleksandrkim.ArchComponentsTest.Db.Note;
+import aleksandrkim.MinimalNotes.Db.AppDatabase;
+import aleksandrkim.MinimalNotes.Db.Note;
 
 /**
  * Created by Aleksandr Kim on 27 May, 2018 11:21 PM for ArchComponentsTest

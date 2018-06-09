@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.NoteFeed;
+package aleksandrkim.MinimalNotes.NoteFeed;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -10,11 +10,11 @@ import android.arch.paging.PagedList;
 import android.os.AsyncTask;
 import android.util.Pair;
 
-import aleksandrkim.ArchComponentsTest.Db.AppDatabase;
-import aleksandrkim.ArchComponentsTest.Db.Note;
-import aleksandrkim.ArchComponentsTest.R;
-import aleksandrkim.ArchComponentsTest.Utils.Colors;
-import aleksandrkim.ArchComponentsTest.Utils.Event;
+import aleksandrkim.MinimalNotes.Db.AppDatabase;
+import aleksandrkim.MinimalNotes.Db.Note;
+import aleksandrkim.MinimalNotes.R;
+import aleksandrkim.MinimalNotes.Utils.Colors;
+import aleksandrkim.MinimalNotes.Utils.Event;
 
 /**
  * Created by Aleksandr Kim on 11 Apr, 2018 11:37 PM for ArchComponentsTest

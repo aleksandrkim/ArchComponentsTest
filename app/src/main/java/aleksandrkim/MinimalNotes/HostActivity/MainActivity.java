@@ -1,4 +1,4 @@
-package aleksandrkim.ArchComponentsTest.HostActivity;
+package aleksandrkim.MinimalNotes.HostActivity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import aleksandrkim.ArchComponentsTest.NoteFeed.NotesFeedFragment;
-import aleksandrkim.ArchComponentsTest.R;
+import aleksandrkim.MinimalNotes.NoteFeed.NotesFeedFragment;
+import aleksandrkim.MinimalNotes.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationActivity {
 

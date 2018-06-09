@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "aleksandrkim.ArchComponentsTest"
+        applicationId "aleksandrkim.MinimalNotes"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
