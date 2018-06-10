@@ -22,7 +22,7 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
 
     private val db: AppDatabase = AppDatabase.getDb(this.getApplication())
 
-    var allPagedNotes: LiveData<PagedList<Note>>? = null
+    lateinit var allPagedNotes: LiveData<PagedList<Note>>
         private set
 
     var swipedNote: MutableLiveData<Event<Pair<Int, Int>>> = MutableLiveData()
@@ -33,7 +33,7 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeAllObs(owner: LifecycleOwner) {
-        allPagedNotes!!.removeObservers(owner)
+        allPagedNotes.removeObservers(owner)
         swipedNote.removeObservers(owner)
     }
 
@@ -63,8 +63,8 @@ class NotesFeedVM(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
-        val TAG = "NotesFeedVM"
-        val LOREM_IPSUM =
+        const val TAG = "NotesFeedVM"
+        const val LOREM_IPSUM =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore " +
                     "magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea " +
                     "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat " +

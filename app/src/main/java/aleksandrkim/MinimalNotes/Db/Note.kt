@@ -22,9 +22,6 @@ data class Note(var title: String = "",
                 @PrimaryKey(autoGenerate = true)
                 var id: Int = 0) {
 
-//    @PrimaryKey(autoGenerate = true)
-//    var id: Int = 0
-//    var createdTime: Long = Calendar.getInstance().timeInMillis
 
     @Ignore
     private val simpleDateFormat = SimpleDateFormat("dd MMM", Locale("Ru"))

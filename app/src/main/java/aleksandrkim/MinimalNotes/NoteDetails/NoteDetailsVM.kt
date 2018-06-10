@@ -7,7 +7,6 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.os.AsyncTask
-import android.util.Log
 
 /**
  * Created by Aleksandr Kim on 27 May, 2018 11:21 PM for ArchComponentsTest
@@ -16,20 +15,12 @@ import android.util.Log
 class NoteDetailsVM(application: Application) : AndroidViewModel(application) {
     val db = AppDatabase.getDb(application)
 
-    val currentNote: MutableLiveData <Note> = MutableLiveData()
-    val color : MutableLiveData<Int> = MutableLiveData()
+    val currentNote: MutableLiveData<Note> = MutableLiveData()
+    val color: MutableLiveData<Int> = MutableLiveData()
 
     fun setCurrentNote(id: Int, savedColor: Int?) {
         AsyncTask.execute {
-            if (id == -1) {
-                currentNote.postValue(Note())
-            } else {
-                currentNote.postValue(db.noteRoomDao().getNoteById(id))
-
-                Log.d(TAG, "fetched " + currentNote.value?.toString())
-                Log.d(TAG, "setCurrentNote " + id)
-                Log.d(TAG, "title " + currentNote.value?.title)
-            }
+            currentNote.postValue(if (id == -1) Note() else db.noteRoomDao().getNoteById(id))
         }
         savedColor?.let { color.value = it }
     }
@@ -44,6 +35,6 @@ class NoteDetailsVM(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
-        val TAG = "NoteDetailsVM"
+        const val TAG = "NoteDetailsVM"
     }
 }

@@ -8,8 +8,9 @@ import kotlin.math.abs
 /**
  * Created by Aleksandr Kim on 30 May, 2018 8:45 PM for ArchComponentsTest
  */
+typealias RecyclerItemSwipeListener = (RecyclerView.ViewHolder, direction: Int) -> Unit
 
-class SwipeCallback(private val recyclerItemSwipeListener: (RecyclerView.ViewHolder, Int) -> Unit) :
+class SwipeCallback(private val recyclerItemSwipeListener: RecyclerItemSwipeListener) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder):
