@@ -11,7 +11,10 @@ import android.arch.persistence.room.OnConflictStrategy.IGNORE
 abstract class BaseDao<T> {
 
     @Insert(onConflict = IGNORE)
-    abstract fun add(t: T)
+    abstract fun add(t: T) : Long
+
+    @Insert(onConflict = IGNORE)
+    abstract fun add(vararg t: T) : LongArray
 
     @Update(onConflict = IGNORE)
     abstract fun update(t: T)
@@ -27,7 +30,8 @@ abstract class BaseDao<T> {
 
     @Insert(onConflict = IGNORE)
     open fun add(t: List<T>) {
-        t.forEach(this::add)
+        for (i in t) add(i)
     }
 
+    abstract fun count() : Int
 }

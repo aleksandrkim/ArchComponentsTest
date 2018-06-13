@@ -12,9 +12,8 @@ import java.util.*
  * Created by Aleksandr Kim on 11 Apr, 2018 6:27 PM for ArchComponentsTest
  */
 
-@Entity(indices = [
-    Index("id"),
-    Index(value = ["title", "body"], name = "search_text")])
+@Entity(tableName = Note.TABLE_NAME,
+        indices = [Index("id"), Index(value = ["title", "body"], name = "search_text")])
 data class Note(var title: String = "",
                 var body: String = "",
                 var color: Int = -1,
@@ -22,19 +21,19 @@ data class Note(var title: String = "",
                 @PrimaryKey(autoGenerate = true)
                 var id: Int = 0) {
 
-
     @Ignore
     private val simpleDateFormat = SimpleDateFormat("dd MMM", Locale("Ru"))
 
     @Ignore
     val createdTimeString: String = simpleDateFormat.format(createdTime)
 
-    private fun equals(obj: Note): Boolean =
-        this.id == obj.id && this.title == obj.title && this.body == obj.body && this.color == obj.color
+    fun sameAs(obj: Note): Boolean =
+        title == obj.title && body == obj.body && color == obj.color && createdTime == obj.createdTime
 
     fun isBlank() = title.isBlank() && body.isBlank()
 
     companion object {
+        const val TABLE_NAME = "notes"
 
         val DIFF_ITEM_CALLBACK: DiffUtil.ItemCallback<Note> = object : DiffUtil.ItemCallback<Note>() {
             override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean = oldItem.id == newItem.id

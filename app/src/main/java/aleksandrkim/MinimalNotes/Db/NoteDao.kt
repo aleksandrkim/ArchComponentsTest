@@ -11,16 +11,22 @@ import android.arch.persistence.room.Query
 @Dao
 abstract class NoteDao : BaseDao<Note>() {
 
-    @Query("SELECT * FROM Note ORDER BY createdTime DESC")
+    @Query("SELECT * FROM " + Note.TABLE_NAME + " ORDER BY createdTime DESC")
     abstract fun getNotesPagedLastCreatedFirst(): DataSource.Factory<Int, Note>
 
-    @Query("SELECT * FROM Note WHERE id = :id")
-    abstract fun getNoteById(id: Int) : Note
+    @Query("SELECT * FROM " + Note.TABLE_NAME + " WHERE id = :id")
+    abstract fun getNoteById(id: Int): Note?
 
-    @Query("DELETE FROM Note")
+    @Query("SELECT * FROM " + Note.TABLE_NAME + " ORDER BY createdTime DESC LIMIT 1")
+    abstract fun getLatestNote(): Note
+
+    @Query("DELETE FROM " + Note.TABLE_NAME)
     abstract fun deleteAll()
 
-    @Query("DELETE FROM Note WHERE id = :id")
+    @Query("DELETE FROM " + Note.TABLE_NAME + " WHERE id = :id")
     abstract fun delete(id: Int)
+
+    @Query("SELECT COUNT(*) FROM " + Note.TABLE_NAME)
+    abstract override fun count(): Int
 
 }
